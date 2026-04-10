@@ -19,5 +19,12 @@ class DevLoginRequest(BaseModel):
     role: Literal["admin", "leader", "team"]
 
 
+class LoginRequest(BaseModel):
+    """Email kept as str so dev domains like ``@myle.local`` validate without DNS rules."""
+
+    email: str = Field(min_length=3, max_length=320)
+    password: str = Field(min_length=1, max_length=512)
+
+
 class DevLoginResponse(BaseModel):
     ok: bool = True

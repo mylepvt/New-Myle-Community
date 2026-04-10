@@ -15,9 +15,10 @@ export function HomePage() {
   const navigate = useNavigate()
   const { data, error, isPending } = useHelloQuery()
   const { data: meta } = useApiMetaQuery()
-  const { data: me } = useAuthMeQuery()
-  const isAuthenticated = useAuthStore((s) => s.isAuthenticated)
+  const { data: me, isPending: mePending } = useAuthMeQuery()
   const logout = useAuthStore((s) => s.logout)
+  const sessionKnown = !mePending || me !== undefined
+  const sessionActive = Boolean(me?.authenticated)
 
   return (
     <div className="mx-auto flex max-w-lg flex-col gap-6 p-6">
@@ -62,7 +63,11 @@ export function HomePage() {
         <Button asChild>
           <Link to="/dashboard">Dashboard</Link>
         </Button>
-        {!isAuthenticated ? (
+        {!sessionKnown ? (
+          <Button variant="secondary" disabled>
+            Checking session…
+          </Button>
+        ) : !sessionActive ? (
           <Button variant="secondary" asChild>
             <Link to="/login">Sign in</Link>
           </Button>

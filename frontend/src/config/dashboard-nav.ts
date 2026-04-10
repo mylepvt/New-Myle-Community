@@ -8,8 +8,8 @@ export type DashboardNavItem = {
   end?: boolean
   /** Override label in sidebar per role (e.g. All Leads vs My Leads). */
   labelByRole?: Partial<Record<Role, string>>
-  /** Hide unless AI module is enabled (future: drive from API). */
-  requiresAi?: boolean
+  /** Hide unless Intelligence nav is enabled (from `GET /api/v1/meta` — product module, not third-party AI). */
+  requiresIntelligence?: boolean
 }
 
 export type DashboardNavSection = {
@@ -17,6 +17,11 @@ export type DashboardNavSection = {
   /** Empty = no section heading (avoids duplicate “Home” + “Dashboard”). */
   label: string
   items: DashboardNavItem[]
+}
+
+/** From `GET /api/v1/meta` — avoid hardcoding feature toggles in the shell (legacy pitfall). */
+export type ClientNavFlags = {
+  intelligence: boolean
 }
 
 /**
@@ -42,16 +47,6 @@ export const dashboardNavSections: DashboardNavSection[] = [
       {
         path: 'execution/at-risk-leads',
         label: 'At-risk leads',
-        roles: ['admin'],
-      },
-      {
-        path: 'execution/weak-members',
-        label: 'Weak members',
-        roles: ['admin'],
-      },
-      {
-        path: 'execution/leak-map',
-        label: 'Leak map',
         roles: ['admin'],
       },
       {
@@ -102,6 +97,11 @@ export const dashboardNavSections: DashboardNavSection[] = [
         roles: ['admin'],
       },
       {
+        path: 'work/lead-pool',
+        label: 'Lead pool',
+        roles: ['leader', 'team'],
+      },
+      {
         path: 'work/lead-pool-admin',
         label: 'Admin lead pool',
         roles: ['admin'],
@@ -113,9 +113,9 @@ export const dashboardNavSections: DashboardNavSection[] = [
       },
       {
         path: 'intelligence',
-        label: 'AI intelligence',
+        label: 'Intelligence',
         roles: ['admin', 'team'],
-        requiresAi: true,
+        requiresIntelligence: true,
       },
     ],
   },
@@ -140,7 +140,7 @@ export const dashboardNavSections: DashboardNavSection[] = [
       },
       {
         path: 'team/enrollment-approvals',
-        label: '₹196 approvals',
+        label: 'Enrollment approvals (INR 196)',
         roles: ['admin', 'leader'],
       },
       {
@@ -277,24 +277,21 @@ export const dashboardNavSections: DashboardNavSection[] = [
   },
 ]
 
-/** AI-gated items visible until you wire a real feature flag from the API. */
-const AI_ENABLED = true
-
-export function itemVisible(item: DashboardNavItem, role: Role): boolean {
+export function itemVisible(item: DashboardNavItem, role: Role, flags: ClientNavFlags): boolean {
   if (!item.roles.includes(role)) {
     return false
   }
-  if (item.requiresAi && !AI_ENABLED) {
+  if (item.requiresIntelligence && !flags.intelligence) {
     return false
   }
   return true
 }
 
-export function filterDashboardNav(role: Role): DashboardNavSection[] {
+export function filterDashboardNav(role: Role, flags: ClientNavFlags): DashboardNavSection[] {
   return dashboardNavSections
     .map((section) => ({
       ...section,
-      items: section.items.filter((item) => itemVisible(item, role)),
+      items: section.items.filter((item) => itemVisible(item, role, flags)),
     }))
     .filter((section) => section.items.length > 0)
 }

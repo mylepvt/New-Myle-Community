@@ -21,13 +21,15 @@ alwaysApply: false
 
 ## Placeholders
 - Feature stubs use **`DashboardPlaceholderPage`** — **title only** unless the feature needs real layout. No “Shell” badges, route path echo, or long placeholder copy.
+- **Exception:** **`IntelligenceWorkPage`** (`/dashboard/intelligence`) — short copy + **`useMetaQuery`**; redirect to `/dashboard` when **`features.intelligence`** is false after fetch (not placeholder data).
+- **Shell stubs:** paths listed in **`frontend/src/config/shell-stub-routes.ts`** render **`ShellStubPage`** (TanStack Query → JSON stub). **`WalletPage`** / **`FinanceRechargesPage`** use **`/api/v1/wallet/*`**. **`DashboardNestedPage`** is **`lazy`** + **`Suspense`** in **`App.tsx`** for a route-level skeleton.
 
 ## Clutter
 - No redundant tips, duplicate “Back” + header **Home**, or extra dev toggles in the chrome. Role preview stays **one** compact control unless product requires more.
 - **`useSyncRoleFromMe`** (in `DashboardLayout`) aligns Zustand role with **`GET /api/v1/auth/me`** when `user_id` + server role change; the header select remains a **preview** until the session identity changes — do not remove that hook when editing auth.
 
 ## AI / flags
-- Do not reintroduce header checkboxes for feature flags. Gate AI nav items via **`AI_ENABLED`** (or later API) inside `dashboard-nav.ts`, not scattered UI.
+- Do not reintroduce header checkboxes for feature flags. **`useMetaQuery`** → `GET /api/v1/meta` supplies **`features.intelligence`**; pass **`ClientNavFlags`** into **`filterDashboardNav(role, flags)`** — never a lone hardcoded toggle in the shell.
 
 ## Plan checklist
 - Cross-check **`docs/MYLE_VL2_CHECKLIST.md`** before closing a milestone so nav, API, and auth items stay aligned.

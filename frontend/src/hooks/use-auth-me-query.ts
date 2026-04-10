@@ -23,9 +23,17 @@ async function fetchMe(): Promise<MeResponse> {
   }
 }
 
-export function useAuthMeQuery() {
+export type UseAuthMeQueryOptions = {
+  /** Use `0` on route gates so each visit revalidates against the server. */
+  staleTime?: number
+  refetchOnMount?: boolean | 'always'
+}
+
+export function useAuthMeQuery(options?: UseAuthMeQueryOptions) {
   return useQuery({
     queryKey: ['auth', 'me'],
     queryFn: fetchMe,
+    staleTime: options?.staleTime ?? 30_000,
+    refetchOnMount: options?.refetchOnMount ?? true,
   })
 }

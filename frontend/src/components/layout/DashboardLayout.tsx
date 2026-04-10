@@ -4,6 +4,7 @@ import { LogOut, Menu, PanelLeftClose } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { DashboardOutletErrorBoundary } from '@/components/routing/DashboardOutletErrorBoundary'
 import { filterDashboardNav, resolveItemLabel } from '@/config/dashboard-nav'
+import { useMetaQuery } from '@/hooks/use-meta-query'
 import { useSyncRoleFromMe } from '@/hooks/use-sync-role-from-me'
 import { cn } from '@/lib/utils'
 import { authLogout } from '@/lib/auth-api'
@@ -14,13 +15,18 @@ import { ROLES, type Role } from '@/types/role'
 
 export function DashboardLayout() {
   useSyncRoleFromMe()
+  const { data: meta } = useMetaQuery()
   const navigate = useNavigate()
   const { sidebarOpen, toggleSidebar } = useShellStore()
   const role = useRoleStore((s) => s.role)
   const setRole = useRoleStore((s) => s.setRole)
   const logout = useAuthStore((s) => s.logout)
 
-  const sections = filterDashboardNav(role)
+  const navFlags = {
+    intelligence: meta?.features.intelligence ?? true,
+  }
+  const sections = filterDashboardNav(role, navFlags)
+  const envLabel = meta?.environment
 
   async function handleLogout() {
     try {
@@ -41,12 +47,22 @@ export function DashboardLayout() {
         )}
       >
         <div className="flex h-14 shrink-0 items-center border-b border-white/10 px-3">
-          <Link
-            to="/dashboard"
-            className="truncate bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-sm font-semibold tracking-tight text-transparent"
-          >
-            Myle vl2
-          </Link>
+          <div className="flex min-w-0 items-center gap-2">
+            <Link
+              to="/dashboard"
+              className="truncate bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-sm font-semibold tracking-tight text-transparent"
+            >
+              Myle vl2
+            </Link>
+            {envLabel && envLabel !== 'production' ? (
+              <span
+                className="shrink-0 rounded border border-amber-500/35 bg-amber-500/10 px-1.5 py-0.5 text-[0.6rem] font-semibold uppercase tracking-wide text-amber-200/90"
+                title="Server-reported environment (APP_ENV)"
+              >
+                {envLabel}
+              </span>
+            ) : null}
+          </div>
         </div>
         <nav className="flex flex-1 flex-col gap-4 overflow-y-auto overflow-x-hidden p-2 pb-4">
           {sections.map((section) => (
