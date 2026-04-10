@@ -1,0 +1,145 @@
+import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom'
+import { LogOut, Menu, PanelLeftClose } from 'lucide-react'
+
+import { Button } from '@/components/ui/button'
+import { DashboardOutletErrorBoundary } from '@/components/routing/DashboardOutletErrorBoundary'
+import { filterDashboardNav, resolveItemLabel } from '@/config/dashboard-nav'
+import { useSyncRoleFromMe } from '@/hooks/use-sync-role-from-me'
+import { cn } from '@/lib/utils'
+import { authLogout } from '@/lib/auth-api'
+import { useAuthStore } from '@/stores/auth-store'
+import { useRoleStore } from '@/stores/role-store'
+import { useShellStore } from '@/stores/shell-store'
+import { ROLES, type Role } from '@/types/role'
+
+export function DashboardLayout() {
+  useSyncRoleFromMe()
+  const navigate = useNavigate()
+  const { sidebarOpen, toggleSidebar } = useShellStore()
+  const role = useRoleStore((s) => s.role)
+  const setRole = useRoleStore((s) => s.setRole)
+  const logout = useAuthStore((s) => s.logout)
+
+  const sections = filterDashboardNav(role)
+
+  async function handleLogout() {
+    try {
+      await authLogout()
+    } catch {
+      /* still clear local session */
+    }
+    logout()
+    navigate('/login', { replace: true })
+  }
+
+  return (
+    <div className="flex min-h-dvh">
+      <aside
+        className={cn(
+          'flex flex-col border-r border-white/10 bg-card/70 backdrop-blur-xl transition-[width] duration-200 ease-out',
+          sidebarOpen ? 'w-60 shrink-0' : 'w-0 shrink-0 overflow-hidden border-0',
+        )}
+      >
+        <div className="flex h-14 shrink-0 items-center border-b border-white/10 px-3">
+          <Link
+            to="/dashboard"
+            className="truncate bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-sm font-semibold tracking-tight text-transparent"
+          >
+            Myle vl2
+          </Link>
+        </div>
+        <nav className="flex flex-1 flex-col gap-4 overflow-y-auto overflow-x-hidden p-2 pb-4">
+          {sections.map((section) => (
+            <div key={section.id}>
+              {section.label ? (
+                <p className="mb-1.5 px-2 text-[0.65rem] font-semibold uppercase tracking-widest text-muted-foreground/80">
+                  {section.label}
+                </p>
+              ) : null}
+              <ul className="flex flex-col gap-0.5">
+                {section.items.map((item) => {
+                  const to =
+                    item.path === '' ? '/dashboard' : `/dashboard/${item.path}`
+                  const label = resolveItemLabel(item, role)
+                  return (
+                    <li key={item.path || 'index'}>
+                      <NavLink
+                        to={to}
+                        end={item.end ?? false}
+                        className={({ isActive }) =>
+                          cn(
+                            'block rounded-lg px-3 py-2 text-sm transition-all duration-200',
+                            isActive
+                              ? 'border border-primary/25 bg-primary/15 font-medium text-primary shadow-[0_0_24px_-8px_hsl(var(--primary)/0.55)]'
+                              : 'text-muted-foreground hover:bg-white/5 hover:text-foreground',
+                          )
+                        }
+                      >
+                        {label}
+                      </NavLink>
+                    </li>
+                  )
+                })}
+              </ul>
+            </div>
+          ))}
+        </nav>
+      </aside>
+
+      <div className="flex min-w-0 flex-1 flex-col">
+        <header className="flex h-14 shrink-0 items-center gap-3 border-b border-white/10 bg-background/40 px-3 backdrop-blur-md">
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            onClick={toggleSidebar}
+            aria-label="Toggle sidebar"
+          >
+            {sidebarOpen ? <PanelLeftClose /> : <Menu />}
+          </Button>
+
+          <div className="flex min-w-0 flex-1 justify-end sm:justify-start">
+            <label className="sr-only" htmlFor="role-preview">
+              Preview as role
+            </label>
+            <select
+              id="role-preview"
+              value={role}
+              onChange={(e) => setRole(e.target.value as Role)}
+              className="max-w-[9rem] rounded-md border border-white/10 bg-card/80 px-2 py-1.5 text-xs font-medium text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40"
+            >
+              {ROLES.map((r) => (
+                <option key={r} value={r}>
+                  {r}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="flex shrink-0 items-center gap-1">
+            <Button variant="ghost" size="sm" asChild>
+              <Link to="/" className="text-muted-foreground">
+                Home
+              </Link>
+            </Button>
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              onClick={() => void handleLogout()}
+              aria-label="Sign out"
+            >
+              <LogOut className="size-4" />
+            </Button>
+          </div>
+        </header>
+
+        <main className="flex-1 overflow-auto p-4 md:p-6">
+          <DashboardOutletErrorBoundary>
+            <Outlet />
+          </DashboardOutletErrorBoundary>
+        </main>
+      </div>
+    </div>
+  )
+}

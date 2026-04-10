@@ -1,0 +1,101 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Velvet dark — default theme (premium, addictive; not a clone of legacy UI) */
+@layer base {
+  :root {
+    /* Deep violet-black base */
+    --background: 262 32% 6%;
+    --foreground: 280 20% 96%;
+    /* Lifted surfaces */
+    --card: 265 28% 9%;
+    --card-foreground: 280 18% 95%;
+    --popover: 265 30% 8%;
+    --popover-foreground: 280 18% 95%;
+    /* Plum velvet accent */
+    --primary: 292 52% 54%;
+    --primary-foreground: 285 100% 99%;
+    --secondary: 265 22% 14%;
+    --secondary-foreground: 280 15% 92%;
+    --muted: 265 18% 14%;
+    --muted-foreground: 265 12% 62%;
+    --accent: 280 35% 16%;
+    --accent-foreground: 280 25% 95%;
+    --destructive: 0 72% 42%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 265 22% 16%;
+    --input: 265 24% 13%;
+    --ring: 292 52% 58%;
+    --radius: 0.625rem;
+    /* Velvet glow (used in gradients / focus) */
+    --velvet-glow: 292 60% 45%;
+    --velvet-deep: 262 40% 4%;
+  }
+
+  /* Keep in sync if `dark` class is toggled later */
+  .dark {
+    --background: 262 32% 6%;
+    --foreground: 280 20% 96%;
+    --card: 265 28% 9%;
+    --card-foreground: 280 18% 95%;
+    --popover: 265 30% 8%;
+    --popover-foreground: 280 18% 95%;
+    --primary: 292 52% 54%;
+    --primary-foreground: 285 100% 99%;
+    --secondary: 265 22% 14%;
+    --secondary-foreground: 280 15% 92%;
+    --muted: 265 18% 14%;
+    --muted-foreground: 265 12% 62%;
+    --accent: 280 35% 16%;
+    --accent-foreground: 280 25% 95%;
+    --destructive: 0 72% 42%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 265 22% 16%;
+    --input: 265 24% 13%;
+    --ring: 292 52% 58%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    @apply scroll-smooth;
+    color-scheme: dark;
+  }
+
+  body {
+    @apply min-h-dvh font-sans text-foreground antialiased;
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+    background-color: hsl(var(--velvet-deep));
+    background-image:
+      radial-gradient(
+        ellipse 130% 90% at 50% -25%,
+        hsl(var(--velvet-glow) / 0.22),
+        transparent 58%
+      ),
+      radial-gradient(
+        ellipse 70% 55% at 110% 85%,
+        hsl(292 45% 28% / 0.14),
+        transparent 50%
+      ),
+      radial-gradient(
+        ellipse 55% 40% at -5% 60%,
+        hsl(262 40% 22% / 0.12),
+        transparent 45%
+      );
+    background-attachment: fixed;
+  }
+
+  #root {
+    @apply min-h-dvh;
+  }
+
+  ::selection {
+    background-color: hsl(var(--primary) / 0.35);
+    color: hsl(var(--primary-foreground));
+  }
+}

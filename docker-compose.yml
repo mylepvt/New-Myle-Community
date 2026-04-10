@@ -1,0 +1,47 @@
+# From repo root: docker compose up --build
+# Frontend: http://localhost:5173  |  API docs: http://localhost:8000/docs
+# Migrations run on backend container start (alembic upgrade head).
+
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: myle
+      POSTGRES_PASSWORD: myle
+      POSTGRES_DB: myle
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U myle -d myle"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+    ports:
+      - "8000:8000"
+    environment:
+      BACKEND_CORS_ORIGINS: "http://localhost:5173,http://127.0.0.1:5173"
+      DATABASE_URL: "postgresql+asyncpg://myle:myle@db:5432/myle"
+      SECRET_KEY: "docker-compose-dev-secret-replace-in-real-deploy"
+      AUTH_DEV_LOGIN_ENABLED: "true"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "5173:5173"
+    environment:
+      VITE_API_URL: "http://localhost:8000"
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:

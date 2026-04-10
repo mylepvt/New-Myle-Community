@@ -1,0 +1,33 @@
+---
+description: Myle vl2 frontend — dashboard nav, routes, no duplicates, minimal UI
+globs: frontend/src/**/*.{ts,tsx}
+alwaysApply: false
+---
+
+# Dashboard shell (must follow)
+
+## Single source of truth
+- All `/dashboard/*` paths and sidebar labels live in **`frontend/src/config/dashboard-nav.ts`** only.
+- Adding a screen = add **one** `DashboardNavItem` there (path + roles + label). Paths flow into `dashboardChildPathSet` automatically — do not maintain a second list.
+
+## Routing
+- Under `/dashboard`, use **only** the existing pattern in `App.tsx`: `index` + **one** splat route → `DashboardNestedPage`.
+- **Never** add per-path `<Route path="work/leads" />` (or similar) under `/dashboard` — that duplicates the shell and drifts from nav.
+
+## Nav quality
+- **No duplicate labels** visible to the same role (e.g. two “Lead pool” with same wording — disambiguate: “Admin lead pool” vs “Lead pool”).
+- **No section heading** for the lone “Dashboard” link: use `label: ''` on that section (see `id: 'main'`).
+- Avoid **Settings → Settings**: first item should be **“General”** (or similar), not repeating the section title.
+
+## Placeholders
+- Feature stubs use **`DashboardPlaceholderPage`** — **title only** unless the feature needs real layout. No “Shell” badges, route path echo, or long placeholder copy.
+
+## Clutter
+- No redundant tips, duplicate “Back” + header **Home**, or extra dev toggles in the chrome. Role preview stays **one** compact control unless product requires more.
+- **`useSyncRoleFromMe`** (in `DashboardLayout`) aligns Zustand role with **`GET /api/v1/auth/me`** when `user_id` + server role change; the header select remains a **preview** until the session identity changes — do not remove that hook when editing auth.
+
+## AI / flags
+- Do not reintroduce header checkboxes for feature flags. Gate AI nav items via **`AI_ENABLED`** (or later API) inside `dashboard-nav.ts`, not scattered UI.
+
+## Plan checklist
+- Cross-check **`docs/MYLE_VL2_CHECKLIST.md`** before closing a milestone so nav, API, and auth items stay aligned.

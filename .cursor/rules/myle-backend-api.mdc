@@ -1,0 +1,28 @@
+---
+description: Myle vl2 backend — FastAPI layout, versioning, avoid duplicate endpoints
+globs: backend/**/*.py
+alwaysApply: false
+---
+
+# Backend conventions
+
+## Structure
+- HTTP routes live under **`app/api/v1/`** (one module per domain). Register them only in **`app/api/v1/router.py`** — `main.py` includes a single `api_router` with prefix `/api/v1`.
+- Shared FastAPI deps (e.g. DB session, **`require_auth_user`** / **`AuthUser`** for cookie JWT): **`app/api/deps.py`**. Settings: **`app/core/config.py`**. Engine/session factory: **`app/db/session.py`** — do not open ad-hoc engines in route files.
+
+## Errors & tracing
+- Failed responses use **`{"error": {"code", "message", "request_id"}}`** (see `app/core/errors.py`). `X-Request-ID` is set on every response (`app/middleware/request_id.py`); CORS exposes that header.
+- Prefer **`HTTPException`** with a short **`detail`** string; handlers map status → **`code`** (e.g. 401 → `unauthorized`).
+
+## API surface
+- **No duplicate routes** for the same method + path (check existing routers before adding).
+- Prefer **one** health-style surface: `/health` and `/health/db` as already defined — don’t add parallel “ping” endpoints without a reason.
+- New domain = **new router module** (e.g. `app/api/v1/leads.py`) + `include_router` — avoid a second “god” `main.py` with dozens of `@app.get`.
+
+## DB / migrations
+- Schema changes = **SQLAlchemy model** + **Alembic revision** — keep model and migration in sync; don’t hand-edit prod DB without a migration story.
+
+## Secrets & config
+- No secrets in code — use **env** (`Settings` / `DATABASE_URL`, etc.). `.env` stays gitignored; document keys in **`.env.example`** only.
+- **`POST /api/v1/auth/dev-login`** is **off** unless `AUTH_DEV_LOGIN_ENABLED=true`. Production must leave it **false** and use real auth instead. When enabled, it loads the **`users`** row for `dev-{role}@myle.local` (seeded by Alembic) and issues a JWT with **`sub` = user id** and optional **`email`** claim.
+- Domain progress is tracked in **`docs/MYLE_VL2_CHECKLIST.md`** — add a checklist line when opening a new surface, then implement the router + schema (no orphan routes).
