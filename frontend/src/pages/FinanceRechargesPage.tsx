@@ -66,7 +66,7 @@ export function FinanceRechargesPage({ title }: Props) {
               value={userId}
               onChange={(e) => setUserId(e.target.value)}
               required
-              className="w-full rounded-md border border-white/10 bg-card/80 px-3 py-2 text-sm text-foreground shadow-[inset_0_1px_3px_hsl(var(--velvet-deep)/0.6)] focus:outline-none focus:ring-2 focus:ring-primary/35"
+              className="w-full rounded-md border border-white/12 bg-white/[0.05] backdrop-blur-sm px-3 py-2 text-sm text-foreground shadow-glass-inset focus:outline-none focus:ring-2 focus:ring-primary/35"
             >
               <option value="">Select…</option>
               {members.data.items.map((m) => (
@@ -90,7 +90,7 @@ export function FinanceRechargesPage({ title }: Props) {
             value={amountCents}
             onChange={(e) => setAmountCents(e.target.value)}
             required
-            className="w-full rounded-md border border-white/10 bg-card/80 px-3 py-2 text-sm text-foreground"
+            className="w-full rounded-md border border-white/12 bg-white/[0.05] backdrop-blur-sm px-3 py-2 text-sm text-foreground"
           />
         </div>
         <div>
@@ -101,7 +101,7 @@ export function FinanceRechargesPage({ title }: Props) {
             id="recharge-note"
             value={note}
             onChange={(e) => setNote(e.target.value)}
-            className="w-full rounded-md border border-white/10 bg-card/80 px-3 py-2 text-sm text-foreground"
+            className="w-full rounded-md border border-white/12 bg-white/[0.05] backdrop-blur-sm px-3 py-2 text-sm text-foreground"
           />
         </div>
         <Button type="submit" disabled={mut.isPending || !userId}>

@@ -112,7 +112,7 @@ export function LoginPage() {
               value={role}
               onChange={(e) => setRole(e.target.value as Role)}
               disabled={pending}
-              className="w-full rounded-lg border border-white/[0.1] bg-black/25 px-3 py-2.5 text-sm text-foreground shadow-[inset_0_1px_2px_rgba(0,0,0,0.35)] focus:outline-none focus:ring-2 focus:ring-primary/35"
+              className="w-full rounded-lg border border-white/[0.12] bg-white/[0.06] px-3 py-2.5 text-sm text-foreground shadow-glass-inset backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-primary/35"
             >
               {ROLES.map((r) => (
                 <option key={r} value={r}>
@@ -151,7 +151,7 @@ export function LoginPage() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             disabled={pwPending}
-            className="mb-2 w-full rounded-lg border border-white/[0.1] bg-black/25 px-3 py-2.5 text-sm text-foreground shadow-[inset_0_1px_2px_rgba(0,0,0,0.35)] focus:outline-none focus:ring-2 focus:ring-primary/35"
+            className="mb-2 w-full rounded-lg border border-white/[0.12] bg-white/[0.06] px-3 py-2.5 text-sm text-foreground shadow-glass-inset backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-primary/35"
           />
           <label className="sr-only" htmlFor="login-password">
             Password
@@ -164,7 +164,7 @@ export function LoginPage() {
             onChange={(e) => setPassword(e.target.value)}
             placeholder={devLoginAllowed ? `Dev default: ${DEV_SEED_PASSWORD}` : 'Password'}
             disabled={pwPending}
-            className="mb-3 w-full rounded-lg border border-white/[0.1] bg-black/25 px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground/70 shadow-[inset_0_1px_2px_rgba(0,0,0,0.35)] focus:outline-none focus:ring-2 focus:ring-primary/35"
+            className="mb-3 w-full rounded-lg border border-white/[0.12] bg-white/[0.06] px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground/70 shadow-glass-inset backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-primary/35"
           />
           <Button
             type="button"

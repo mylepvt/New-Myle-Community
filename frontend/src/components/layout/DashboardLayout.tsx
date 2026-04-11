@@ -44,11 +44,11 @@ export function DashboardLayout() {
     <div className="flex min-h-dvh">
       <aside
         className={cn(
-          'flex flex-col border-r border-white/[0.07] bg-card/85 shadow-sidebar-glow backdrop-blur-2xl transition-[width] duration-300 ease-out',
+          'flex flex-col border-r border-white/[0.1] bg-white/[0.04] shadow-sidebar-glow backdrop-blur-2xl backdrop-saturate-150 transition-[width] duration-300 ease-out',
           sidebarOpen ? 'w-60 shrink-0' : 'w-0 shrink-0 overflow-hidden border-0',
         )}
       >
-        <div className="flex h-14 shrink-0 items-center border-b border-white/[0.08] bg-black/10 px-3 shadow-header-bar">
+        <div className="flex h-14 shrink-0 items-center border-b border-white/[0.08] bg-white/[0.03] px-3 shadow-header-bar backdrop-blur-md">
           <div className="flex min-w-0 items-center gap-2">
             <Link
               to="/dashboard"
@@ -88,7 +88,7 @@ export function DashboardLayout() {
                           cn(
                             'relative block rounded-lg py-2.5 pl-3 pr-3 text-sm transition-all duration-200',
                             isActive
-                              ? 'bg-gradient-to-r from-primary/20 to-primary/5 font-medium text-primary shadow-velvet before:absolute before:inset-y-1 before:left-0 before:w-[3px] before:rounded-full before:bg-primary before:shadow-[0_0_12px_hsl(var(--primary)/0.7)]'
+                              ? 'bg-gradient-to-r from-primary/18 to-primary/[0.06] font-medium text-primary shadow-glass-glow before:absolute before:inset-y-1 before:left-0 before:w-[3px] before:rounded-full before:bg-primary before:shadow-[0_0_14px_hsl(var(--primary)/0.55)]'
                               : 'text-muted-foreground hover:bg-white/[0.05] hover:text-foreground',
                           )
                         }
@@ -105,7 +105,7 @@ export function DashboardLayout() {
       </aside>
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="flex h-14 shrink-0 items-center gap-3 border-b border-white/[0.07] bg-background/55 px-3 shadow-header-bar backdrop-blur-xl">
+        <header className="flex h-14 shrink-0 items-center gap-3 border-b border-white/[0.1] bg-white/[0.04] px-3 shadow-header-bar backdrop-blur-2xl backdrop-saturate-150">
           <Button
             type="button"
             variant="ghost"
@@ -124,7 +124,7 @@ export function DashboardLayout() {
               id="role-preview"
               value={role}
               onChange={(e) => setRole(e.target.value as Role)}
-              className="max-w-[9rem] rounded-lg border border-white/[0.1] bg-card/90 px-2.5 py-1.5 text-xs font-medium text-foreground shadow-[inset_0_1px_2px_rgba(0,0,0,0.25)] focus:outline-none focus:ring-2 focus:ring-primary/35"
+              className="max-w-[9rem] rounded-lg border border-white/[0.12] bg-white/[0.06] px-2.5 py-1.5 text-xs font-medium text-foreground shadow-glass-inset backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-primary/35"
             >
               {ROLES.map((r) => (
                 <option key={r} value={r}>

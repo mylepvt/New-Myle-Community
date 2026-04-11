@@ -53,7 +53,7 @@ export function TeamMembersPage({ title }: Props) {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 disabled={createMut.isPending}
-                className="w-full rounded-lg border border-white/[0.1] bg-black/20 px-3 py-2.5 text-foreground shadow-[inset_0_1px_2px_rgba(0,0,0,0.35)] focus:outline-none focus:ring-2 focus:ring-primary/35"
+                className="w-full rounded-lg border border-white/[0.12] bg-white/[0.06] px-3 py-2.5 text-foreground shadow-glass-inset backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-primary/35"
               />
             </label>
             <label className="block min-w-[10rem] flex-1">
@@ -64,7 +64,7 @@ export function TeamMembersPage({ title }: Props) {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 disabled={createMut.isPending}
-                className="w-full rounded-lg border border-white/[0.1] bg-black/20 px-3 py-2.5 text-foreground shadow-[inset_0_1px_2px_rgba(0,0,0,0.35)] focus:outline-none focus:ring-2 focus:ring-primary/35"
+                className="w-full rounded-lg border border-white/[0.12] bg-white/[0.06] px-3 py-2.5 text-foreground shadow-glass-inset backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-primary/35"
               />
             </label>
             <label className="block w-full min-w-[8rem] sm:w-auto">
@@ -73,7 +73,7 @@ export function TeamMembersPage({ title }: Props) {
                 value={newRole}
                 onChange={(e) => setNewRole(e.target.value as Role)}
                 disabled={createMut.isPending}
-                className="w-full rounded-lg border border-white/[0.1] bg-black/20 px-3 py-2.5 text-foreground shadow-[inset_0_1px_2px_rgba(0,0,0,0.35)] focus:outline-none focus:ring-2 focus:ring-primary/35 sm:w-36"
+                className="w-full rounded-lg border border-white/[0.12] bg-white/[0.06] px-3 py-2.5 text-foreground shadow-glass-inset backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-primary/35 sm:w-36"
               >
                 {ROLES.map((r) => (
                   <option key={r} value={r}>

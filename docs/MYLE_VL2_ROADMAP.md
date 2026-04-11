@@ -1,6 +1,7 @@
 # Myle vl2 — full roadmap & execution plan
 
-This document defines the **full plan** and **phase-by-phase execution order**. Fine-grained checkboxes live in **`MYLE_VL2_CHECKLIST.md`** — tick those when you merge or ship. This file keeps a **“where we are”** snapshot plus **what to do next**.
+This document defines the **full plan** and **phase-by-phase execution order**. Fine-grained checkboxes live in **`MYLE_VL2_CHECKLIST.md`** — tick those when you merge or ship. This file keeps a **“where we are”** snapshot plus **what to do next**.  
+**Production readiness + Apple-grade UX (devices, theme, typography):** [`PRODUCTION_APPLE_GRADE_CHECKLIST.md`](./PRODUCTION_APPLE_GRADE_CHECKLIST.md).
 
 ---
 

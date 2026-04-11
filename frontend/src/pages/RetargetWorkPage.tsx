@@ -76,7 +76,7 @@ export function RetargetWorkPage({ title }: Props) {
                           body: { status: e.target.value as LeadStatus },
                         })
                       }}
-                      className="rounded-md border border-white/10 bg-card/80 px-2 py-1.5 text-xs text-foreground shadow-[inset_0_1px_3px_hsl(var(--velvet-deep)/0.6)] focus:outline-none focus:ring-2 focus:ring-primary/35"
+                      className="rounded-md border border-white/12 bg-white/[0.05] backdrop-blur-sm px-2 py-1.5 text-xs text-foreground shadow-glass-inset focus:outline-none focus:ring-2 focus:ring-primary/35"
                     >
                       {LEAD_STATUS_OPTIONS.map((o) => (
                         <option key={o.value} value={o.value}>

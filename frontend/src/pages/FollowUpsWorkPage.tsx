@@ -75,7 +75,7 @@ export function FollowUpsWorkPage({ title }: Props) {
               value={leadId}
               onChange={(e) => setLeadId(e.target.value)}
               disabled={leadsQ.isPending || createMut.isPending}
-              className="w-full rounded-md border border-white/10 bg-card/80 px-3 py-2 text-sm text-foreground shadow-[inset_0_1px_3px_hsl(var(--velvet-deep)/0.6)] focus:outline-none focus:ring-2 focus:ring-primary/35"
+              className="w-full rounded-md border border-white/12 bg-white/[0.05] backdrop-blur-sm px-3 py-2 text-sm text-foreground shadow-glass-inset focus:outline-none focus:ring-2 focus:ring-primary/35"
             >
               <option value="">Select lead…</option>
               {(leadsQ.data?.items ?? []).map((l) => (
@@ -94,7 +94,7 @@ export function FollowUpsWorkPage({ title }: Props) {
               type="datetime-local"
               value={dueLocal}
               onChange={(e) => setDueLocal(e.target.value)}
-              className="w-full rounded-md border border-white/10 bg-card/80 px-3 py-2 text-sm text-foreground shadow-[inset_0_1px_3px_hsl(var(--velvet-deep)/0.6)] focus:outline-none focus:ring-2 focus:ring-primary/35"
+              className="w-full rounded-md border border-white/12 bg-white/[0.05] backdrop-blur-sm px-3 py-2 text-sm text-foreground shadow-glass-inset focus:outline-none focus:ring-2 focus:ring-primary/35"
             />
           </div>
         </div>
@@ -108,7 +108,7 @@ export function FollowUpsWorkPage({ title }: Props) {
             onChange={(e) => setNote(e.target.value)}
             rows={2}
             placeholder="What to do next…"
-            className="w-full rounded-md border border-white/10 bg-card/80 px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground shadow-[inset_0_1px_3px_hsl(var(--velvet-deep)/0.6)] focus:outline-none focus:ring-2 focus:ring-primary/35"
+            className="w-full rounded-md border border-white/12 bg-white/[0.05] backdrop-blur-sm px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground shadow-glass-inset focus:outline-none focus:ring-2 focus:ring-primary/35"
           />
         </div>
         <Button type="submit" disabled={createMut.isPending || !leadId || !note.trim()}>

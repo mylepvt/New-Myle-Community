@@ -96,7 +96,7 @@ export function LeadsWorkPage({ title, listMode = 'active' }: Props) {
             value={qInput}
             onChange={(e) => setQInput(e.target.value)}
             placeholder="Substring match…"
-            className="w-full rounded-md border border-white/10 bg-card/80 px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground shadow-[inset_0_1px_3px_hsl(var(--velvet-deep)/0.6)] focus:outline-none focus:ring-2 focus:ring-primary/35"
+            className="w-full rounded-md border border-white/12 bg-white/[0.05] backdrop-blur-sm px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground shadow-glass-inset focus:outline-none focus:ring-2 focus:ring-primary/35"
           />
         </div>
         <div className="min-w-[10rem]">
@@ -112,7 +112,7 @@ export function LeadsWorkPage({ title, listMode = 'active' }: Props) {
                 status: e.target.value === '' ? '' : (e.target.value as LeadStatus),
               }))
             }
-            className="w-full rounded-md border border-white/10 bg-card/80 px-3 py-2 text-sm text-foreground shadow-[inset_0_1px_3px_hsl(var(--velvet-deep)/0.6)] focus:outline-none focus:ring-2 focus:ring-primary/35"
+            className="w-full rounded-md border border-white/12 bg-white/[0.05] backdrop-blur-sm px-3 py-2 text-sm text-foreground shadow-glass-inset focus:outline-none focus:ring-2 focus:ring-primary/35"
           >
             <option value="">All</option>
             {LEAD_STATUS_OPTIONS.map((o) => (
@@ -140,7 +140,7 @@ export function LeadsWorkPage({ title, listMode = 'active' }: Props) {
                 onChange={(e) => setName(e.target.value)}
                 placeholder="e.g. Acme Corp"
                 disabled={createMut.isPending}
-                className="w-full rounded-md border border-white/10 bg-card/80 px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground shadow-[inset_0_1px_3px_hsl(var(--velvet-deep)/0.6)] focus:outline-none focus:ring-2 focus:ring-primary/35"
+                className="w-full rounded-md border border-white/12 bg-white/[0.05] backdrop-blur-sm px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground shadow-glass-inset focus:outline-none focus:ring-2 focus:ring-primary/35"
               />
             </div>
             <div className="min-w-[10rem]">
@@ -152,7 +152,7 @@ export function LeadsWorkPage({ title, listMode = 'active' }: Props) {
                 value={newStatus}
                 onChange={(e) => setNewStatus(e.target.value as LeadStatus)}
                 disabled={createMut.isPending}
-                className="w-full rounded-md border border-white/10 bg-card/80 px-3 py-2 text-sm text-foreground shadow-[inset_0_1px_3px_hsl(var(--velvet-deep)/0.6)] focus:outline-none focus:ring-2 focus:ring-primary/35"
+                className="w-full rounded-md border border-white/12 bg-white/[0.05] backdrop-blur-sm px-3 py-2 text-sm text-foreground shadow-glass-inset focus:outline-none focus:ring-2 focus:ring-primary/35"
               >
                 {LEAD_STATUS_OPTIONS.map((o) => (
                   <option key={o.value} value={o.value}>
@@ -249,7 +249,7 @@ export function LeadsWorkPage({ title, listMode = 'active' }: Props) {
                           const v = e.target.value as LeadStatus
                           void patchMut.mutateAsync({ id: l.id, body: { status: v } })
                         }}
-                        className="rounded-md border border-white/10 bg-card/80 px-2 py-1.5 text-xs text-foreground shadow-[inset_0_1px_3px_hsl(var(--velvet-deep)/0.6)] focus:outline-none focus:ring-2 focus:ring-primary/35"
+                        className="rounded-md border border-white/12 bg-white/[0.05] backdrop-blur-sm px-2 py-1.5 text-xs text-foreground shadow-glass-inset focus:outline-none focus:ring-2 focus:ring-primary/35"
                       >
                         {LEAD_STATUS_OPTIONS.map((o) => (
                           <option key={o.value} value={o.value}>
