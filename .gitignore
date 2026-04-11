@@ -6,3 +6,6 @@
 __pycache__/
 *.py[cod]
 .pytest_cache/
+
+# Local Claude / IDE agent tooling (not app source)
+.claude/

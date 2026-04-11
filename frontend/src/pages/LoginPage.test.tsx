@@ -53,9 +53,12 @@ describe('LoginPage', () => {
         screen.getByRole('button', { name: /continue with preview role/i }),
       ).toBeInTheDocument()
     })
-    expect(screen.getByRole('heading', { name: /^sign in$/i })).toBeInTheDocument()
-    expect(screen.getByText('Myle')).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /^sign in$/i })).toBeInTheDocument()
+    expect(
+      screen.getByRole('heading', { name: /myle community/i }),
+    ).toBeInTheDocument()
+    expect(
+      screen.getByRole('button', { name: /sign in/i }),
+    ).toBeInTheDocument()
   })
 
   it('hides dev quick-login when meta auth_dev_login_enabled is false', async () => {
@@ -65,7 +68,7 @@ describe('LoginPage', () => {
     await waitFor(() => {
       expect(screen.queryByRole('button', { name: /continue \(dev role\)/i })).not.toBeInTheDocument()
     })
-    expect(screen.getByRole('button', { name: /^sign in$/i })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /sign in/i })).toBeInTheDocument()
     expect(
       screen.getByText(/use your work email and password/i),
     ).toBeInTheDocument()

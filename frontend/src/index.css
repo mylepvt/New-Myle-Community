@@ -3,67 +3,68 @@
 @tailwind utilities;
 
 /*
- * Myle — admin dashboard aesthetic: deep wine canvas, bordeaux accent.
+ * Myle — dark workspace: deep charcoal canvas (#121212), neon lime accent (~#A3FF00).
+ * Visual language aligned with high-contrast fintech / CRM dashboards; app content unchanged.
  */
 @layer base {
   :root {
-    --background: 342 22% 7%;
-    --foreground: 344 18% 93%;
-    --surface: 342 20% 8%;
-    --card: 342 20% 10%;
-    --card-foreground: 344 18% 93%;
-    --popover: 342 20% 9%;
-    --popover-foreground: 344 18% 93%;
-    /* Wine / Bordeaux CTA — rich crimson */
-    --primary: 344 68% 52%;
-    --primary-foreground: 344 15% 96%;
-    --secondary: 342 18% 13%;
-    --secondary-foreground: 344 14% 90%;
-    --muted: 342 16% 14%;
-    --muted-foreground: 342 10% 62%;
-    --accent: 342 18% 16%;
-    --accent-foreground: 344 20% 95%;
-    --destructive: 0 84% 61%;
+    --background: 0 0% 7%;
+    --foreground: 0 0% 96%;
+    --surface: 0 0% 9%;
+    --card: 0 0% 11%;
+    --card-foreground: 0 0% 96%;
+    --popover: 0 0% 10%;
+    --popover-foreground: 0 0% 96%;
+    /* Neon lime CTA — ~#A3FF00 */
+    --primary: 68 100% 50%;
+    --primary-foreground: 0 0% 7%;
+    --secondary: 0 0% 14%;
+    --secondary-foreground: 0 0% 92%;
+    --muted: 0 0% 15%;
+    --muted-foreground: 0 0% 62%;
+    --accent: 0 0% 16%;
+    --accent-foreground: 0 0% 96%;
+    --destructive: 0 72% 52%;
     --destructive-foreground: 0 0% 100%;
-    --border: 342 14% 19%;
-    --input: 342 16% 12%;
-    --ring: 344 68% 52%;
-    --radius: 0.75rem;
+    --border: 0 0% 18%;
+    --input: 0 0% 13%;
+    --ring: 68 100% 50%;
+    --radius: 1.125rem;
     --success: 142 71% 45%;
     --success-foreground: 144 100% 97%;
     --warning: 38 92% 50%;
     --warning-foreground: 48 100% 97%;
-    --glass-ambient: 344 68% 45%;
-    --glass-base: 342 22% 7%;
-    --subtle: 342 8% 44%;
+    --glass-ambient: 68 100% 50%;
+    --glass-base: 0 0% 7%;
+    --subtle: 0 0% 45%;
   }
 
   .dark {
-    --background: 342 22% 7%;
-    --foreground: 344 18% 93%;
-    --surface: 342 20% 8%;
-    --card: 342 20% 10%;
-    --card-foreground: 344 18% 93%;
-    --popover: 342 20% 9%;
-    --popover-foreground: 344 18% 93%;
-    --primary: 344 68% 52%;
-    --primary-foreground: 344 15% 96%;
-    --secondary: 342 18% 13%;
-    --secondary-foreground: 344 14% 90%;
-    --muted: 342 16% 14%;
-    --muted-foreground: 342 10% 62%;
-    --accent: 342 18% 16%;
-    --accent-foreground: 344 20% 95%;
-    --destructive: 0 84% 61%;
+    --background: 0 0% 7%;
+    --foreground: 0 0% 96%;
+    --surface: 0 0% 9%;
+    --card: 0 0% 11%;
+    --card-foreground: 0 0% 96%;
+    --popover: 0 0% 10%;
+    --popover-foreground: 0 0% 96%;
+    --primary: 68 100% 50%;
+    --primary-foreground: 0 0% 7%;
+    --secondary: 0 0% 14%;
+    --secondary-foreground: 0 0% 92%;
+    --muted: 0 0% 15%;
+    --muted-foreground: 0 0% 62%;
+    --accent: 0 0% 16%;
+    --accent-foreground: 0 0% 96%;
+    --destructive: 0 72% 52%;
     --destructive-foreground: 0 0% 100%;
-    --border: 342 14% 19%;
-    --input: 342 16% 12%;
-    --ring: 344 68% 52%;
+    --border: 0 0% 18%;
+    --input: 0 0% 13%;
+    --ring: 68 100% 50%;
     --success: 142 71% 45%;
     --success-foreground: 144 100% 97%;
     --warning: 38 92% 50%;
     --warning-foreground: 48 100% 97%;
-    --subtle: 342 8% 44%;
+    --subtle: 0 0% 45%;
   }
 }
 
@@ -75,7 +76,6 @@
   html {
     @apply scroll-smooth;
     color-scheme: dark;
-    font-optical-sizing: auto;
   }
 
   body {
@@ -83,10 +83,9 @@
     font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
     background-color: hsl(var(--glass-base));
     background-image:
-      radial-gradient(ellipse 100% 80% at 50% -20%, hsl(var(--glass-ambient) / 0.16), transparent 55%),
-      radial-gradient(ellipse 50% 40% at 100% 0%, hsl(344 60% 40% / 0.07), transparent 45%),
-      radial-gradient(ellipse 45% 35% at 0% 70%, hsl(342 30% 18% / 0.12), transparent 50%),
-      radial-gradient(ellipse 100% 60% at 50% 110%, hsl(342 30% 3% / 0.95), transparent 55%);
+      radial-gradient(ellipse 90% 70% at 0% 0%, hsl(68 100% 50% / 0.09), transparent 50%),
+      radial-gradient(ellipse 80% 50% at 100% 0%, hsl(68 80% 40% / 0.05), transparent 45%),
+      radial-gradient(ellipse 60% 40% at 50% 100%, hsl(0 0% 2% / 0.9), transparent 55%);
     background-attachment: fixed;
   }
 
@@ -95,41 +94,15 @@
   }
 
   h1 {
-    @apply font-heading text-ds-h1 text-foreground;
-    letter-spacing: -0.03em;
+    @apply font-heading text-ds-h1 font-semibold tracking-tight text-foreground;
   }
 
   h2 {
-    @apply font-heading text-ds-h2 text-foreground;
-    letter-spacing: -0.025em;
+    @apply font-heading text-ds-h2 font-semibold tracking-tight text-foreground;
   }
 
   h3 {
-    @apply font-heading text-ds-h3 font-medium text-foreground;
-    letter-spacing: -0.015em;
-  }
-
-  /* iOS safe areas */
-  body {
-    padding-bottom: env(safe-area-inset-bottom);
-    padding-left: env(safe-area-inset-left);
-    padding-right: env(safe-area-inset-right);
-  }
-
-  /* Scrollbar */
-  ::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
-  }
-  ::-webkit-scrollbar-track {
-    background: transparent;
-  }
-  ::-webkit-scrollbar-thumb {
-    background: hsl(344 30% 28%);
-    border-radius: 3px;
-  }
-  ::-webkit-scrollbar-thumb:hover {
-    background: hsl(344 50% 40%);
+    @apply font-heading text-ds-h3 font-medium tracking-tight text-foreground;
   }
 
   ::selection {
@@ -140,11 +113,11 @@
 
 @layer components {
   .surface-elevated {
-    @apply rounded-xl border border-primary/20 bg-card text-card-foreground shadow-[0_20px_60px_-24px_rgba(0,0,0,0.65),inset_0_1px_0_0_rgba(255,255,255,0.05)] backdrop-blur-md;
+    @apply rounded-2xl border border-white/[0.08] bg-card text-card-foreground shadow-[0_24px_64px_-28px_rgba(0,0,0,0.75),inset_0_1px_0_0_rgba(255,255,255,0.06)] backdrop-blur-md;
   }
 
   .surface-inset {
-    @apply rounded-lg border border-border bg-muted/50 shadow-[inset_0_1px_2px_rgba(0,0,0,0.25)] backdrop-blur-sm;
+    @apply rounded-xl border border-white/[0.06] bg-muted/40 shadow-[inset_0_1px_2px_rgba(0,0,0,0.35)] backdrop-blur-sm;
   }
 
   .field-label {
@@ -152,6 +125,6 @@
   }
 
   .field-input {
-    @apply h-10 min-h-[40px] w-full rounded-lg border border-border bg-input px-3 py-0 text-ds-body text-foreground shadow-glass-inset transition-[border-color,box-shadow] placeholder:text-muted-foreground focus:border-primary/55 focus:outline-none focus:ring-2 focus:ring-primary/25 disabled:cursor-not-allowed disabled:opacity-50;
+    @apply h-10 min-h-[40px] w-full rounded-xl border border-border bg-input px-3 py-0 text-ds-body text-foreground shadow-glass-inset transition-[border-color,box-shadow] placeholder:text-muted-foreground focus:border-primary/60 focus:outline-none focus:ring-2 focus:ring-primary/30 disabled:cursor-not-allowed disabled:opacity-50;
   }
 }

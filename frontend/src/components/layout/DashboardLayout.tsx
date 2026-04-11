@@ -65,11 +65,11 @@ export function DashboardLayout() {
     <div className="flex min-h-dvh bg-background">
       <aside
         className={cn(
-          'flex min-h-dvh shrink-0 flex-col border-r border-primary/15 bg-surface shadow-sidebar-glow transition-[width] duration-300 ease-out',
+          'flex min-h-dvh shrink-0 flex-col border-r border-white/[0.06] bg-surface shadow-sidebar-glow transition-[width] duration-300 ease-out',
           sidebarOpen ? 'w-[17rem]' : 'w-0 overflow-hidden border-0',
         )}
       >
-        <div className="flex h-16 shrink-0 items-center border-b border-primary/10 px-4">
+        <div className="flex h-16 shrink-0 items-center border-b border-white/[0.06] px-4">
           <Link
             to="/dashboard"
             className="font-heading text-lg font-semibold tracking-tight text-foreground"
@@ -92,7 +92,7 @@ export function DashboardLayout() {
               {Array.from({ length: 8 }).map((_, i) => (
                 <div
                   key={i}
-                  className="h-10 animate-pulse rounded-xl bg-muted/50"
+                  className="h-10 animate-pulse rounded-2xl bg-muted/50"
                 />
               ))}
             </div>
@@ -118,10 +118,10 @@ export function DashboardLayout() {
                         end={item.end ?? false}
                         className={({ isActive }) =>
                           cn(
-                            'group relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-all duration-200',
+                            'group relative flex items-center gap-3 rounded-2xl px-3 py-2.5 text-sm transition-all duration-200',
                             isActive
-                              ? 'border border-primary/45 bg-primary/[0.09] font-semibold text-primary shadow-glass-glow'
-                              : 'border border-transparent text-muted-foreground hover:border-border hover:bg-muted/40 hover:text-foreground',
+                              ? 'bg-primary font-semibold text-primary-foreground shadow-md shadow-primary/25'
+                              : 'border border-transparent text-muted-foreground hover:bg-white/[0.06] hover:text-foreground',
                           )
                         }
                       >
@@ -130,19 +130,13 @@ export function DashboardLayout() {
                             <Icon
                               className={cn(
                                 'size-[1.125rem] shrink-0',
-                                isActive ? 'text-primary' : 'opacity-80',
+                                isActive ? 'text-primary-foreground' : 'opacity-80',
                               )}
                               aria-hidden
                             />
                             <span className="min-w-0 flex-1 truncate">
                               {label}
                             </span>
-                            {isActive ? (
-                              <span
-                                className="size-2 shrink-0 rounded-full bg-primary shadow-[0_0_10px_hsl(var(--primary)/0.9)]"
-                                aria-hidden
-                              />
-                            ) : null}
                           </>
                         )}
                       </NavLink>
@@ -169,7 +163,7 @@ export function DashboardLayout() {
       </aside>
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="flex h-16 shrink-0 items-center gap-3 border-b border-primary/10 bg-background/90 px-3 shadow-header-bar backdrop-blur-xl">
+        <header className="flex h-16 shrink-0 items-center gap-3 border-b border-white/[0.06] bg-background/95 px-3 shadow-header-bar backdrop-blur-xl">
           <Button
             type="button"
             variant="ghost"
@@ -196,7 +190,7 @@ export function DashboardLayout() {
               value={headerSearch}
               onChange={(e) => setHeaderSearch(e.target.value)}
               placeholder="Search leads (Enter → open list)"
-              className="h-10 w-full rounded-full border border-border bg-muted/50 pl-10 pr-4 text-ds-body text-foreground placeholder:text-muted-foreground shadow-glass-inset focus:border-primary/45 focus:outline-none focus:ring-2 focus:ring-primary/20"
+              className="h-10 w-full rounded-full border border-white/[0.08] bg-muted/40 pl-10 pr-4 text-ds-body text-foreground placeholder:text-muted-foreground shadow-glass-inset focus:border-primary/50 focus:outline-none focus:ring-2 focus:ring-primary/25"
               aria-label="Search leads"
               autoComplete="off"
             />
@@ -211,12 +205,12 @@ export function DashboardLayout() {
               aria-label="Notifications"
             >
               <Bell className="size-5" />
-              <span className="absolute right-1.5 top-1.5 size-2 rounded-full bg-primary ring-2 ring-background" />
+              <span className="absolute right-1.5 top-1.5 size-2 rounded-full bg-primary ring-2 ring-background shadow-[0_0_8px_hsl(68_100%_50%/0.8)]" />
             </Button>
 
             {shellRole != null ? (
               <span
-                className="max-w-[7rem] truncate rounded-lg border border-border bg-muted/50 px-2.5 py-1.5 text-center text-ds-caption font-semibold text-foreground shadow-glass-inset sm:max-w-[9rem]"
+                className="max-w-[7rem] truncate rounded-xl border border-white/[0.08] bg-muted/40 px-2.5 py-1.5 text-center text-ds-caption font-semibold text-foreground shadow-glass-inset sm:max-w-[9rem]"
                 title="Your role from the signed-in account"
               >
                 {roleShortLabel(shellRole)}
@@ -226,7 +220,7 @@ export function DashboardLayout() {
             ) : null}
 
             <div
-              className="flex size-9 shrink-0 items-center justify-center rounded-full border border-primary/25 bg-primary/10 text-xs font-bold text-primary"
+              className="flex size-9 shrink-0 items-center justify-center rounded-full border border-primary/35 bg-primary/15 text-xs font-bold text-primary"
               title={me?.email ?? shellRole ?? ''}
             >
               {displayInitial}
@@ -241,7 +235,7 @@ export function DashboardLayout() {
           </div>
         </header>
 
-        <main className="relative flex-1 overflow-auto bg-gradient-to-b from-background via-background to-muted/20 p-4 md:p-6 lg:p-8">
+        <main className="relative flex-1 overflow-auto bg-gradient-to-b from-background via-background to-muted/25 p-4 md:p-6 lg:p-8">
           <DashboardOutletErrorBoundary>
             <Outlet />
           </DashboardOutletErrorBoundary>

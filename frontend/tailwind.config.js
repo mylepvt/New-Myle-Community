@@ -15,7 +15,7 @@ export default {
           'BlinkMacSystemFont',
           'sans-serif',
         ],
-        heading: ['Poppins', 'Inter', 'system-ui', 'sans-serif'],
+        heading: ['Inter', 'system-ui', 'sans-serif'],
       },
       fontSize: {
         'ds-h1': [
@@ -96,19 +96,20 @@ export default {
         md: 'calc(var(--radius) - 2px)',
         sm: 'calc(var(--radius) - 4px)',
         xl: 'calc(var(--radius) + 4px)',
+        '2xl': 'calc(var(--radius) + 10px)',
       },
       letterSpacing: {
         'label-wide': '0.08em',
       },
       boxShadow: {
         'glass-glow':
-          '0 0 40px -12px hsl(344 68% 48% / 0.30), inset 0 1px 0 0 hsl(0 0% 100% / 0.06)',
+          '0 0 48px -10px hsl(68 100% 50% / 0.35), inset 0 1px 0 0 hsl(0 0% 100% / 0.06)',
         'glass-inset':
-          'inset 0 1px 2px rgba(0,0,0,0.2), inset 0 -1px 0 rgba(255,255,255,0.03)',
+          'inset 0 1px 2px rgba(0,0,0,0.35), inset 0 -1px 0 rgba(255,255,255,0.03)',
         'sidebar-glow':
-          'inset -1px 0 0 hsl(344 50% 42% / 0.14)',
+          'inset -1px 0 0 hsl(68 100% 50% / 0.1)',
         'header-bar':
-          '0 1px 0 0 hsl(344 38% 32% / 0.18), 0 12px 40px -16px rgba(0,0,0,0.5)',
+          '0 1px 0 0 hsl(0 0% 100% / 0.06), 0 16px 48px -20px rgba(0,0,0,0.65)',
       },
     },
   },
