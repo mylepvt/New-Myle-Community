@@ -54,7 +54,7 @@ export function DashboardLayout() {
               to="/dashboard"
               className="truncate bg-gradient-to-r from-foreground via-foreground to-primary/75 bg-clip-text text-sm font-semibold tracking-tight text-transparent"
             >
-              Myle vl2
+              Myle
             </Link>
             {envLabel && envLabel !== 'production' ? (
               <span

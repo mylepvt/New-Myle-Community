@@ -50,10 +50,11 @@ describe('LoginPage', () => {
     renderLogin()
     await waitFor(() => {
       expect(
-        screen.getByRole('button', { name: /continue \(dev role\)/i }),
+        screen.getByRole('button', { name: /continue with preview role/i }),
       ).toBeInTheDocument()
     })
-    expect(screen.getByRole('heading', { name: /myle vl2/i })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: /^sign in$/i })).toBeInTheDocument()
+    expect(screen.getByText('Myle')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /^sign in$/i })).toBeInTheDocument()
   })
 
@@ -65,6 +66,8 @@ describe('LoginPage', () => {
       expect(screen.queryByRole('button', { name: /continue \(dev role\)/i })).not.toBeInTheDocument()
     })
     expect(screen.getByRole('button', { name: /^sign in$/i })).toBeInTheDocument()
-    expect(screen.getByText(/sign in with email \+ password/i)).toBeInTheDocument()
+    expect(
+      screen.getByText(/use your work email and password/i),
+    ).toBeInTheDocument()
   })
 })

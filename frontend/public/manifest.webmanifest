@@ -1,10 +1,10 @@
 {
-  "name": "Myle vl2",
+  "name": "Myle",
   "short_name": "Myle",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#0c0e14",
-  "theme_color": "#0c0e14",
+  "background_color": "#0B0F14",
+  "theme_color": "#0B0F14",
   "icons": [
     {
       "src": "/favicon.svg",
