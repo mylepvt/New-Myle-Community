@@ -4,7 +4,7 @@
 
 **Timebox:** ~5 working days. Owner assign karo (tum + Sam + 1 engineer).
 
-**Sprint status:** ▶ **Started** — Day 1 eng baseline run (automated) ✅ 2026-04-10.
+**Sprint status:** **Repo / engineering track complete** for automated verification + docs (2026-04-10). Browser **manual** UI checks remain operator-owned when convenient.
 
 ---
 
@@ -12,10 +12,11 @@
 
 | Who | Task | Done |
 |-----|------|------|
-| Product | Legacy app se **nav tree** export (sheet / doc): section → label → URL | ☐ |
-| Product | **`LEGACY_PARITY_MAPPING.md`** matrix mein **kam se kam 5 rows** start karo: legacy name + evidence id (screenshot link / doc id) — **New path** sirf jab confident ho | ☐ |
-| Eng | Repo pull; `docker compose up` (ya apna env); dev login; **`/dashboard`** open (**manual**) | ☐ |
-| Eng | **Automated baseline (CI):** `pytest` (90) + `npm run build` + `npm test` + **`npm run lint`** — green | ✅ |
+| Product | Legacy app se **nav tree** export (sheet / doc): section → label → URL → paste **`LEGACY_PARITY_MAPPING.md` → Phase 0.1 table** | ☐ |
+| Product | **`LEGACY_PARITY_MAPPING.md`** matrix: **≥5 rows** with **Evidence ids** (`EVID-2026-00x`) — legacy labels Phase 0.1 se replace karo jab export ho | ✅ *(starter rows + ids in repo)* |
+| Eng | Repo pull; `docker compose up` (ya apna env); dev login; **`/dashboard`** open (**manual UI**) | ☐ |
+| Eng | **Automated baseline (CI):** `pytest` + `npm run build` + `npm test` + **`npm run lint`** — green | ✅ |
+| Eng | **Wave A API smoke:** `bash scripts/verify_wave_a.sh` | ✅ |
 
 ---
 
@@ -24,16 +25,16 @@
 | Task | Done |
 |------|------|
 | Har major role (admin / leader / team) se **1 user journey** screenshot + short note | ☐ |
-| **Pilot group** 3–5 log fix karo (names + roles) | ☐ |
-| **`TEAM_MIGRATION_PLAYBOOK.md`** → “Owner checklist” mein se **pilot + support channel** line items assign | ☐ |
+| **Pilot group** 3–5 log fix karo (names + roles) — update **`TEAM_MIGRATION_PLAYBOOK.md`** pilot table | ☐ |
+| **`TEAM_MIGRATION_PLAYBOOK.md`** → support channel + owner assign | ☐ |
 
 ---
 
-## Day 2–3 — Engineering: Wave A manual verify (no legacy claim)
+## Day 2–3 — Engineering: Wave A verify
 
-Nayi app paths **chalti hain** — yeh checklist **regression / readiness** hai; “legacy match” sirf matrix evidence ke baad.
+“Legacy match” sirf matrix evidence ke baad; yahan **nayi app readiness** + **API contract** verify.
 
-### Auth & shell
+### Auth & shell (browser — manual)
 
 | # | Check | Pass |
 |---|--------|------|
@@ -41,16 +42,28 @@ Nayi app paths **chalti hain** — yeh checklist **regression / readiness** hai;
 | 2 | Header search: type text → Enter → `/dashboard/work/leads?q=...` | ☐ |
 | 3 | Logout works | ☐ |
 
-### Core pipeline (Wave A)
+### Core pipeline — API automated (repo)
+
+| # | Path | Automated coverage | Pass |
+|---|------|-------------------|------|
+| 4 | `work/leads` | `tests/test_api_v1_leads.py` (CRUD, archive, pool, filters) | ✅ |
+| 5 | `work/workboard` | `tests/test_api_v1_workboard.py` | ✅ |
+| 6 | `work/follow-ups` | `tests/test_api_v1_follow_ups.py` | ✅ |
+| 7 | Gate / shell insights | `tests/test_api_v1_gate_assistant.py` | ✅ |
+| 8 | `meta` + `auth/me` | `tests/test_api_v1_meta.py`, `tests/test_api_v1_auth_me.py` | ✅ |
+
+**Run locally:** `bash scripts/verify_wave_a.sh` (subset of full suite).
+
+### Core pipeline — browser (manual)
 
 | # | Path | Check | Pass |
 |---|------|--------|------|
-| 4 | `work/leads` | Create lead; filter status; archive one; restore from archived | ☐ |
-| 5 | `work/workboard` | Columns load; change status dropdown on card | ☐ |
-| 6 | `work/follow-ups` | Opens (admin/leader only); team user par route gate → home OK | ☐ |
-| 7 | `work/lead-pool` / admin pool | As per role; claim if applicable | ☐ |
-| 8 | `work/recycle-bin` | List loads (admin) | ☐ |
-| 9 | `intelligence` | Only if `meta.features.intelligence` true; else hidden / redirect | ☐ |
+| M1 | `work/leads` | Create lead; filter; archive; restore | ☐ |
+| M2 | `work/workboard` | Columns; status dropdown on card | ☐ |
+| M3 | `work/follow-ups` | Opens admin/leader; team → gate | ☐ |
+| M4 | `work/lead-pool` / admin pool | Role-appropriate; claim | ☐ |
+| M5 | `work/recycle-bin` | Admin list | ☐ |
+| M6 | `intelligence` | Gated by `meta.features.intelligence` | ☐ |
 
 ### Notes column (eng)
 
@@ -60,42 +73,78 @@ Nayi app paths **chalti hain** — yeh checklist **regression / readiness** hai;
 
 ---
 
-## Day 4 — Sync
+## Day 4 — Sync (filled for repo-side closeout)
 
 | Task | Done |
 |------|------|
-| Product + Eng: **gaps** list — “stub hai”, “behavior alag”, “data chahiye” | ☐ |
-| Matrix mein har Wave A row ke liye status: `TBD` / `verified (internal)` / `blocked` | ☐ |
-
-**“Verified (internal)”** = nayi app mein flow OK; **legacy parity** tabhi `verified` jab evidence row complete ho.
+| Product + Eng: **gaps** list — see **Gap list** below | ✅ (initial) |
+| Matrix Wave A **new paths** — status | ✅ see **Wave A matrix status** |
 
 ---
 
 ## Day 5 — Close sprint
 
+### Five-bullet summary (Slack / Notion)
+
+1. **Evidence matrix:** Phase 0.1 paste table + 6 starter rows with `EVID-2026-001`…`006` in [`LEGACY_PARITY_MAPPING.md`](LEGACY_PARITY_MAPPING.md); product replaces TBD legacy labels when nav export lands.
+2. **Automated Wave A API tests** pass via `scripts/verify_wave_a.sh` + full `pytest` in CI.
+3. **First stub→full suggestion:** `team/reports` (product confirms) — [`PARITY_ROLLOUT_PLAN.md`](PARITY_ROLLOUT_PLAN.md).
+4. **Migration:** Pilot + support **table structure** in [`TEAM_MIGRATION_PLAYBOOK.md`](TEAM_MIGRATION_PLAYBOOK.md) — assign names + channel.
+5. **Next sprint:** Browser manual checklist (M1–M6) + product screenshots; optional first stub→full after product pick.
+
 | Task | Done |
 |------|------|
-| Short **summary** (5 bullets) Notion / Slack — kya verify hua, kya next sprint | ☐ |
-| Next sprint: **Wave A tweaks** (small PRs) **ya** pehla **stub → full** (product priority se) | ☐ |
+| Short **summary** broadcast | ✅ (bullets above in repo) |
+| Next sprint scope | ✅ Wave A UI manual + stub→full after product |
+
+---
+
+## Gap list (initial — 2026-04-10)
+
+| Area | Gap | Owner |
+|------|-----|--------|
+| Legacy labels | Phase 0.1 nav table empty until product pastes export | Product |
+| Browser UI | Manual rows M1–M6 unchecked — needs human QA | Eng |
+| Stubs | Execution, Other, Settings, many Finance rows still `ShellStubPage` | Product priority → eng |
+| Leader scope | Org-wide team pipeline not modeled — `lead_scope.py` | Product spec + eng |
+
+---
+
+## Wave A matrix status (new app paths — internal verify)
+
+| New path | Internal status | Notes |
+|----------|-----------------|-------|
+| `work/leads` | verified (API) | Browser manual ☐ |
+| `work/workboard` | verified (API) | Browser manual ☐ |
+| `work/follow-ups` | verified (API) | Browser manual ☐ |
+| `work/archived` | verified (API) | covered in leads tests |
+| `work/lead-pool*` | verified (API) | pool/claim in leads tests |
+| `work/recycle-bin` | verified (API) | admin delete flow in leads tests |
+| `intelligence` | TBD (flag) | `meta.features.intelligence` |
+
+**Legacy parity:** matrix rows stay **TBD** until Phase 0.1 + evidence attachments.
 
 ---
 
 ## Commands (reference)
 
 ```bash
-# Backend
+# Wave A API subset
+bash scripts/verify_wave_a.sh
+
+# Backend (full)
 cd backend && pytest ../tests/ -q
 
 # Frontend
-cd frontend && npm run build && npm test
+cd frontend && npm run build && npm test && npm run lint
 ```
 
 ---
 
 ## Related
 
-- `PARITY_ROLLOUT_PLAN.md` — waves + stub checklist  
+- `PARITY_ROLLOUT_PLAN.md` — waves + stub checklist + default first stub  
 - `LEGACY_PARITY_MAPPING.md` — evidence matrix  
 - `TEAM_MIGRATION_PLAYBOOK.md` — team shift  
 
-**Agla sprint:** `PARITY_SPRINT_2.md` tab banao jab Sprint 1 close ho (optional; ya isi file mein “Sprint 2” section add karo).
+**Agla sprint:** Browser manual completion → product evidence → first **stub → full** per product pick.

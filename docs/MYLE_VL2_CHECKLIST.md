@@ -143,11 +143,14 @@ Stub = contract only; **Done** = backed by DB + rules.
 
 **Runbook:** `docs/PARITY_SPRINT_1.md` (Week 1) · `docs/PARITY_ROLLOUT_PLAN.md` (waves) · `docs/LEGACY_PARITY_MAPPING.md` (matrix).
 
-- [ ] **Sprint 1 — Product:** Legacy nav export + ≥5 matrix rows with evidence refs (`LEGACY_PARITY_MAPPING.md`)
-- [x] **Sprint 1 — Eng (automated baseline):** `pytest` + `npm run build` + `npm test` + `npm run lint` green (`PARITY_SPRINT_1.md` Day 1)
-- [ ] **Sprint 1 — Eng:** Wave A manual verify checklist complete (`PARITY_SPRINT_1.md`); notes / issues filed
-- [ ] **Sprint 1 — Team:** Pilot users + support channel named (`TEAM_MIGRATION_PLAYBOOK.md`)
-- [ ] Next: first **stub → full** only after spec + matrix row (see `PARITY_ROLLOUT_PLAN.md`)
+- [x] **Sprint 1 — Matrix starter:** ≥5 rows + `EVID-2026-00x` ids + Phase 0.1 paste table (`LEGACY_PARITY_MAPPING.md`)
+- [ ] **Sprint 1 — Product:** Phase 0.1 legacy **nav export** pasted (exact labels/URLs from old app)
+- [x] **Sprint 1 — Eng (automated):** `pytest` + `npm run build` + `npm test` + `npm run lint` + `bash scripts/verify_wave_a.sh` (`PARITY_SPRINT_1.md`)
+- [ ] **Sprint 1 — Eng (browser):** Wave A manual rows M1–M6 (`PARITY_SPRINT_1.md`)
+- [x] **Sprint 1 — Playbook structure:** pilot + support **table** in `TEAM_MIGRATION_PLAYBOOK.md` (assign names + channel when ready)
+- [ ] **Sprint 1 — Team:** Pilot names + dated start + support channel owner filled in playbook
+- [x] **Stub → full default:** engineering suggestion documented (`PARITY_ROLLOUT_PLAN.md` — product confirms)
+- [ ] Next: first **stub → full** implementation only after product pick + matrix row (see `PARITY_ROLLOUT_PLAN.md`)
 
 ---
 

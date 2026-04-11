@@ -80,15 +80,32 @@ Roles: **`frontend/src/config/dashboard-route-roles.json`** (exact list per path
 
 ---
 
+## Phase 0.1 — Legacy navigation export (paste here)
+
+Product: legacy app se export karke neeche table bharein (section → menu label → URL). Exact strings **guess mat karo** — purane app se copy.
+
+| Section (legacy) | Menu label (legacy) | URL path (legacy) | Roles (legacy) | Notes |
+|------------------|----------------------|-------------------|----------------|-------|
+| | | | | |
+
+*Export id (for matrix Evidence column):* `NAV-EXPORT-001` — jab yeh table bhari ho, matrix rows mein Evidence mein `NAV-EXPORT-001` cite karo.
+
+---
+
 ## Parity matrix (legacy ↔ new) — fill with evidence
 
-Copy rows as needed. **Legacy** fields are intentionally blank until product supplies them.
+**Minimum starter rows (2026-04):** New-path side is factual; **Legacy ref** = exact label/URL from Phase 0.1 table jab mile; tab tak **TBD** text + Evidence id reserve.
 
-| Legacy ref (id + menu/path) | Evidence | New path | Parity status | Owner / date |
-|-----------------------------|----------|----------|---------------|--------------|
-| *example:* `Legacy: Workboard` | *example:* link to legacy route + screenshot 2026-04-10 | `work/workboard` | TBD | |
-| | | | | |
-| | | | | |
+| Legacy ref (id + menu/path) | Evidence | New path | New wiring | Parity status | Owner / date |
+|-----------------------------|----------|----------|------------|---------------|--------------|
+| TBD — *replace with Phase 0.1 row for primary lead list* | `EVID-2026-001` — attach screenshot or spec when ready | `work/leads` | full | TBD | |
+| TBD — *pipeline / board view* | `EVID-2026-002` | `work/workboard` | full | TBD | |
+| TBD — *follow-up queue* | `EVID-2026-003` | `work/follow-ups` | full | TBD | |
+| TBD — *archived / closed list* | `EVID-2026-004` | `work/archived` | full | TBD | |
+| TBD — *shared pool* | `EVID-2026-005` | `work/lead-pool` or `work/lead-pool-admin` | full | TBD | |
+| TBD — *recycle / deleted* | `EVID-2026-006` | `work/recycle-bin` | full | TBD | |
+
+**Evidence ids:** Repo-local reference slots — jab file/Notion/screenshot attach ho, yahi id matrix aur evidence store mein use karo. **“match”** sirf jab dono legacy + new documented hon.
 
 **Parity status values:** `TBD` | `partial` | `match` | `won’t match (reason)` — only with evidence for legacy + new.
 

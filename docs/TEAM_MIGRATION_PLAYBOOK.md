@@ -14,7 +14,21 @@ Goal: Jinhone **purani app** use ki hai, unko **kam shock**, **clear path**, aur
 
 ---
 
-## 2. Rollout phases (suggested)
+## 2. Pilot roster & support (assign names — Sprint 1)
+
+| Role | Name / email | Start date | Notes |
+|------|--------------|------------|-------|
+| Admin pilot | *TBD — assign* | | Full nav + pool / recycle |
+| Leader pilot | *TBD — assign* | | Leads + workboard + follow-ups |
+| Team pilot | *TBD — assign* | | Scoped leads + wallet if applicable |
+
+**Support channel:** *TBD — e.g. Slack `#myle-vl2-rollout` or WhatsApp group* — **owner:** *TBD*
+
+**Escalation:** Engineering on-call or repo maintainer + product (Sam) for parity / stub questions.
+
+---
+
+## 3. Rollout phases (suggested)
 
 1. **Pilot** — chhota group (admin + 1 leader + 1 team); real tasks nayi app par; feedback loop short (daily / weekly).
 2. **Parallel run** (jab tak safe ho) — critical workflows dono jagah possible hon; **cutover date** announce karo.
@@ -25,7 +39,7 @@ Repo technical order: **`docs/PARITY_ROLLOUT_PLAN.md`** (waves).
 
 ---
 
-## 3. Team ko dena (templates)
+## 4. Team ko dena (templates)
 
 - **One-pager PDF / Notion:** “New Myle — same work, new app” + screenshot 4–5 cheezon ke (dashboard, leads, workboard).
 - **Role-based checklists:** Admin kya karega; Leader kya; Team kya — 5 bullets each.
@@ -33,7 +47,7 @@ Repo technical order: **`docs/PARITY_ROLLOUT_PLAN.md`** (waves).
 
 ---
 
-## 4. Support & friction
+## 5. Support & friction
 
 | Friction | Mitigation |
 |----------|------------|
@@ -43,7 +57,7 @@ Repo technical order: **`docs/PARITY_ROLLOUT_PLAN.md`** (waves).
 
 ---
 
-## 5. Owner checklist (launch se pehle)
+## 6. Owner checklist (launch se pehle)
 
 - [ ] Parity matrix mein **top 10 flows** mapped (evidence)
 - [ ] Pilot users + dates

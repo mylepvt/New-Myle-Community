@@ -108,6 +108,20 @@ Promote jab legacy evidence + priority mile — `ShellStubPage` pattern se `full
 
 ---
 
+## Default first stub → `full` (engineering suggestion — **product confirms**)
+
+Jab product ne priority na di ho, pehla promote candidate pick karte waqt: **chhota scope**, **clear GET stub**, **kam cross‑cut**.
+
+| Order | New path | Why start here |
+|-------|----------|----------------|
+| 1 (suggested) | `team/reports` | Wave B; isolated list/report UI; stub API `GET /api/v1/team/reports` already wired in registry |
+| 2 | `other/notice-board` | Often simple read‑only feed |
+| 3 | `execution/at-risk-leads` | If ops needs execution visibility before team reports |
+
+**Product:** Ek row choose karo → `LEGACY_PARITY_MAPPING.md` mein evidence + acceptance → phir neeche **Stub → full** checklist run karo.
+
+---
+
 ## Stub → `full` — har feature ke liye same engineering checklist
 
 1. **Spec gate:** Legacy evidence row in `LEGACY_PARITY_MAPPING.md` (acceptance: fields, roles, errors).
