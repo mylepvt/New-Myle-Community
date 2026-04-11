@@ -27,6 +27,9 @@ import { WorkboardPage } from '@/pages/WorkboardPage'
 import { ShellStubPage } from '@/pages/ShellStubPage'
 import { WalletPage } from '@/pages/WalletPage'
 import { FinanceRechargesPage } from '@/pages/FinanceRechargesPage'
+import { LeadDetailPage } from '@/pages/LeadDetailPage'
+import { WalletRechargePage } from '@/pages/WalletRechargePage'
+import { WalletRechargeAdminPage } from '@/pages/WalletRechargeAdminPage'
 
 function renderFullUi(ui: FullUiSurface, title: string) {
   switch (ui.kind) {
@@ -60,6 +63,10 @@ function renderFullUi(ui: FullUiSurface, title: string) {
       return <WalletPage title={title} />
     case 'finance-recharges':
       return <FinanceRechargesPage title={title} />
+    case 'wallet-recharge':
+      return <WalletRechargePage title={title} />
+    case 'wallet-recharge-admin':
+      return <WalletRechargeAdminPage title={title} />
     default: {
       const _exhaustive: never = ui
       return _exhaustive
@@ -77,6 +84,12 @@ export function DashboardNestedPage() {
   const { data: meta } = useMetaQuery()
   const navFlags = {
     intelligence: meta?.features.intelligence ?? DEFAULT_META.features.intelligence,
+  }
+
+  const leadDetailMatch = /^work\/leads\/(\d+)$/.exec(path)
+  if (leadDetailMatch) {
+    const leadId = parseInt(leadDetailMatch[1], 10)
+    return <LeadDetailPage leadId={leadId} />
   }
 
   if (!path || !dashboardChildPathSet.has(path)) {

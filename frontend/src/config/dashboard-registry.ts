@@ -78,6 +78,8 @@ export type FullUiSurface =
     }
   | { kind: 'wallet' }
   | { kind: 'finance-recharges' }
+  | { kind: 'wallet-recharge' }
+  | { kind: 'wallet-recharge-admin' }
 
 export type DashboardRouteDef = {
   path: string
@@ -343,6 +345,22 @@ export const DASHBOARD_ROUTE_DEFS: DashboardRouteDef[] = [
     roles: routeRoles('finance/lead-pool'),
     surface: 'stub',
     stubApiPath: '/api/v1/finance/lead-pool',
+  },
+  {
+    path: 'finance/recharge-request',
+    section: { id: 'finance', label: 'Finance' },
+    label: 'Recharge wallet',
+    roles: routeRoles('finance/recharge-request'),
+    surface: 'full',
+    ui: { kind: 'wallet-recharge' },
+  },
+  {
+    path: 'finance/recharge-admin',
+    section: { id: 'finance', label: 'Finance' },
+    label: 'Recharge requests',
+    roles: routeRoles('finance/recharge-admin'),
+    surface: 'full',
+    ui: { kind: 'wallet-recharge-admin' },
   },
   {
     path: 'other/leaderboard',

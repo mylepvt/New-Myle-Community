@@ -9,8 +9,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.api.deps import AuthUser, get_db, require_auth_user
 from app.core.lead_status import LEAD_STATUS_SET
 from app.core.realtime_hub import notify_topics
+from app.models.activity_log import ActivityLog
+from app.models.call_event import CallEvent
 from app.models.lead import Lead
-from app.schemas.leads import LeadCreate, LeadListResponse, LeadPublic, LeadUpdate
+from app.schemas.call_events import CallEventCreate, CallEventListResponse, CallEventPublic
+from app.schemas.leads import LeadCreate, LeadDetailPublic, LeadListResponse, LeadPublic, LeadUpdate
 from app.services.lead_scope import lead_visibility_where
 
 router = APIRouter()
@@ -124,8 +127,22 @@ async def create_lead(
         name=body.name.strip(),
         status=body.status,
         created_by_user_id=user.user_id,
+        phone=body.phone,
+        email=body.email,
+        city=body.city,
+        source=body.source,
+        notes=body.notes,
     )
     session.add(lead)
+    await session.flush()
+    log = ActivityLog(
+        user_id=user.user_id,
+        action="lead.created",
+        entity_type="lead",
+        entity_id=lead.id,
+        meta={"name": lead.name, "status": lead.status},
+    )
+    session.add(log)
     await session.commit()
     await session.refresh(lead)
     await notify_topics("leads")
@@ -224,6 +241,46 @@ async def update_lead(
     elif body.archived is False:
         lead.archived_at = None
 
+    # Contact fields
+    if body.phone is not None:
+        lead.phone = body.phone
+    if body.email is not None:
+        lead.email = body.email
+    if body.city is not None:
+        lead.city = body.city
+    if body.source is not None:
+        lead.source = body.source
+    if body.notes is not None:
+        lead.notes = body.notes
+
+    # Call status
+    if body.call_status is not None:
+        lead.call_status = body.call_status
+
+    # WhatsApp flag
+    if body.whatsapp_sent is True:
+        lead.whatsapp_sent_at = datetime.now(timezone.utc)
+    elif body.whatsapp_sent is False:
+        lead.whatsapp_sent_at = None
+
+    # Payment status
+    if body.payment_status is not None:
+        lead.payment_status = body.payment_status
+
+    # Day completion flags
+    if body.day1_completed is True:
+        lead.day1_completed_at = datetime.now(timezone.utc)
+    elif body.day1_completed is False:
+        lead.day1_completed_at = None
+    if body.day2_completed is True:
+        lead.day2_completed_at = datetime.now(timezone.utc)
+    elif body.day2_completed is False:
+        lead.day2_completed_at = None
+    if body.day3_completed is True:
+        lead.day3_completed_at = datetime.now(timezone.utc)
+    elif body.day3_completed is False:
+        lead.day3_completed_at = None
+
     await session.commit()
     await session.refresh(lead)
     await notify_topics("leads")
@@ -245,3 +302,132 @@ async def delete_lead(
     lead.in_pool = False
     await session.commit()
     await notify_topics("leads")
+
+
+@router.get("/{lead_id}", response_model=LeadDetailPublic)
+async def get_lead(
+    lead_id: int,
+    user: Annotated[AuthUser, Depends(require_auth_user)],
+    session: Annotated[AsyncSession, Depends(get_db)],
+) -> LeadDetailPublic:
+    """Fetch full detail for a single lead (respects visibility rules)."""
+    lead = await _get_lead_or_404(session, lead_id)
+
+    if lead.deleted_at is not None:
+        raise HTTPException(status_code=http_status.HTTP_404_NOT_FOUND, detail="Lead not found")
+
+    vis = lead_visibility_where(user)
+    if vis is not None:
+        # Non-admin: must be creator or assigned
+        if lead.created_by_user_id != user.user_id and lead.assigned_to_user_id != user.user_id:
+            raise HTTPException(status_code=http_status.HTTP_403_FORBIDDEN, detail="Forbidden")
+
+    return LeadDetailPublic.model_validate(lead)
+
+
+@router.post(
+    "/{lead_id}/calls",
+    response_model=CallEventPublic,
+    status_code=http_status.HTTP_201_CREATED,
+)
+async def log_call(
+    lead_id: int,
+    body: CallEventCreate,
+    user: Annotated[AuthUser, Depends(require_auth_user)],
+    session: Annotated[AsyncSession, Depends(get_db)],
+) -> CallEventPublic:
+    """Log a call event against a lead; updates call_count, last_called_at, call_status."""
+    lead = await _get_lead_or_404(session, lead_id)
+
+    if lead.deleted_at is not None:
+        raise HTTPException(status_code=http_status.HTTP_404_NOT_FOUND, detail="Lead not found")
+
+    if not _can_mutate_lead(user, lead):
+        # Also allow assigned user to log calls
+        if lead.assigned_to_user_id != user.user_id:
+            raise HTTPException(status_code=http_status.HTTP_403_FORBIDDEN, detail="Forbidden")
+
+    now = datetime.now(timezone.utc)
+
+    event = CallEvent(
+        lead_id=lead_id,
+        user_id=user.user_id,
+        outcome=body.outcome,
+        duration_seconds=body.duration_seconds,
+        notes=body.notes,
+        called_at=now,
+    )
+    session.add(event)
+
+    # Update lead call tracking atomically
+    lead.call_count = (lead.call_count or 0) + 1
+    lead.last_called_at = now
+    # Map outcome to lead call_status
+    outcome_to_call_status = {
+        "answered": "called",
+        "no_answer": "not_called",
+        "busy": "not_called",
+        "callback_requested": "callback_requested",
+        "wrong_number": "not_called",
+    }
+    lead.call_status = outcome_to_call_status.get(body.outcome, "called")
+
+    activity = ActivityLog(
+        user_id=user.user_id,
+        action="call.logged",
+        entity_type="call_event",
+        entity_id=None,  # will be updated after flush
+        meta={
+            "lead_id": lead_id,
+            "outcome": body.outcome,
+            "duration_seconds": body.duration_seconds,
+        },
+    )
+    session.add(activity)
+
+    await session.flush()
+    # Backfill the entity_id with the newly created event id
+    activity.entity_id = event.id
+
+    await session.commit()
+    await session.refresh(event)
+    await notify_topics("leads")
+    return CallEventPublic.model_validate(event)
+
+
+@router.get("/{lead_id}/calls", response_model=CallEventListResponse)
+async def list_calls(
+    lead_id: int,
+    user: Annotated[AuthUser, Depends(require_auth_user)],
+    session: Annotated[AsyncSession, Depends(get_db)],
+    limit: int = Query(default=50, ge=1, le=200),
+    offset: int = Query(default=0, ge=0),
+) -> CallEventListResponse:
+    """List all call events for a lead (respects visibility rules)."""
+    lead = await _get_lead_or_404(session, lead_id)
+
+    if lead.deleted_at is not None:
+        raise HTTPException(status_code=http_status.HTTP_404_NOT_FOUND, detail="Lead not found")
+
+    vis = lead_visibility_where(user)
+    if vis is not None:
+        if lead.created_by_user_id != user.user_id and lead.assigned_to_user_id != user.user_id:
+            raise HTTPException(status_code=http_status.HTTP_403_FORBIDDEN, detail="Forbidden")
+
+    count_stmt = (
+        select(func.count())
+        .select_from(CallEvent)
+        .where(CallEvent.lead_id == lead_id)
+    )
+    total = int((await session.execute(count_stmt)).scalar_one())
+
+    list_stmt = (
+        select(CallEvent)
+        .where(CallEvent.lead_id == lead_id)
+        .order_by(CallEvent.called_at.desc())
+        .limit(limit)
+        .offset(offset)
+    )
+    rows = (await session.execute(list_stmt)).scalars().all()
+    items = [CallEventPublic.model_validate(r) for r in rows]
+    return CallEventListResponse(items=items, total=total)

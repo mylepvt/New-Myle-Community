@@ -36,5 +36,7 @@
   "settings/app": ["admin"],
   "settings/help": ["admin"],
   "settings/all-members": ["admin"],
-  "settings/org-tree": ["admin"]
+  "settings/org-tree": ["admin"],
+  "finance/recharge-request": ["admin", "leader", "team"],
+  "finance/recharge-admin": ["admin"]
 }
