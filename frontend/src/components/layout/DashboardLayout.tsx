@@ -44,15 +44,15 @@ export function DashboardLayout() {
     <div className="flex min-h-dvh">
       <aside
         className={cn(
-          'flex flex-col border-r border-white/10 bg-card/70 backdrop-blur-xl transition-[width] duration-200 ease-out',
+          'flex flex-col border-r border-white/[0.07] bg-card/85 shadow-sidebar-glow backdrop-blur-2xl transition-[width] duration-300 ease-out',
           sidebarOpen ? 'w-60 shrink-0' : 'w-0 shrink-0 overflow-hidden border-0',
         )}
       >
-        <div className="flex h-14 shrink-0 items-center border-b border-white/10 px-3">
+        <div className="flex h-14 shrink-0 items-center border-b border-white/[0.08] bg-black/10 px-3 shadow-header-bar">
           <div className="flex min-w-0 items-center gap-2">
             <Link
               to="/dashboard"
-              className="truncate bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-sm font-semibold tracking-tight text-transparent"
+              className="truncate bg-gradient-to-r from-foreground via-foreground to-primary/75 bg-clip-text text-sm font-semibold tracking-tight text-transparent"
             >
               Myle vl2
             </Link>
@@ -70,7 +70,7 @@ export function DashboardLayout() {
           {sections.map((section) => (
             <div key={section.id}>
               {section.label ? (
-                <p className="mb-1.5 px-2 text-[0.65rem] font-semibold uppercase tracking-widest text-muted-foreground/80">
+                <p className="mb-1.5 px-2 text-[0.62rem] font-semibold uppercase tracking-label-wide text-muted-foreground/75">
                   {section.label}
                 </p>
               ) : null}
@@ -86,10 +86,10 @@ export function DashboardLayout() {
                         end={item.end ?? false}
                         className={({ isActive }) =>
                           cn(
-                            'block rounded-lg px-3 py-2 text-sm transition-all duration-200',
+                            'relative block rounded-lg py-2.5 pl-3 pr-3 text-sm transition-all duration-200',
                             isActive
-                              ? 'border border-primary/25 bg-primary/15 font-medium text-primary shadow-[0_0_24px_-8px_hsl(var(--primary)/0.55)]'
-                              : 'text-muted-foreground hover:bg-white/5 hover:text-foreground',
+                              ? 'bg-gradient-to-r from-primary/20 to-primary/5 font-medium text-primary shadow-velvet before:absolute before:inset-y-1 before:left-0 before:w-[3px] before:rounded-full before:bg-primary before:shadow-[0_0_12px_hsl(var(--primary)/0.7)]'
+                              : 'text-muted-foreground hover:bg-white/[0.05] hover:text-foreground',
                           )
                         }
                       >
@@ -105,7 +105,7 @@ export function DashboardLayout() {
       </aside>
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="flex h-14 shrink-0 items-center gap-3 border-b border-white/10 bg-background/40 px-3 backdrop-blur-md">
+        <header className="flex h-14 shrink-0 items-center gap-3 border-b border-white/[0.07] bg-background/55 px-3 shadow-header-bar backdrop-blur-xl">
           <Button
             type="button"
             variant="ghost"
@@ -124,7 +124,7 @@ export function DashboardLayout() {
               id="role-preview"
               value={role}
               onChange={(e) => setRole(e.target.value as Role)}
-              className="max-w-[9rem] rounded-md border border-white/10 bg-card/80 px-2 py-1.5 text-xs font-medium text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40"
+              className="max-w-[9rem] rounded-lg border border-white/[0.1] bg-card/90 px-2.5 py-1.5 text-xs font-medium text-foreground shadow-[inset_0_1px_2px_rgba(0,0,0,0.25)] focus:outline-none focus:ring-2 focus:ring-primary/35"
             >
               {ROLES.map((r) => (
                 <option key={r} value={r}>
@@ -152,7 +152,7 @@ export function DashboardLayout() {
           </div>
         </header>
 
-        <main className="flex-1 overflow-auto p-4 md:p-6">
+        <main className="relative flex-1 overflow-auto bg-gradient-to-b from-transparent via-transparent to-background/40 p-4 md:p-6 lg:p-8">
           <DashboardOutletErrorBoundary>
             <Outlet />
           </DashboardOutletErrorBoundary>

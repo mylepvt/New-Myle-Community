@@ -11,7 +11,7 @@ export function ShellStubPage({ title, apiPath }: Props) {
 
   return (
     <div className="max-w-2xl space-y-6">
-      <h1 className="text-xl font-semibold tracking-tight text-foreground">{title}</h1>
+      <h1 className="text-2xl font-semibold tracking-tight text-foreground">{title}</h1>
 
       {isPending ? (
         <div className="space-y-2">
@@ -27,7 +27,7 @@ export function ShellStubPage({ title, apiPath }: Props) {
         </div>
       ) : null}
       {data ? (
-        <div className="space-y-3 rounded-lg border border-white/10 bg-card/40 p-4 text-sm text-muted-foreground">
+        <div className="surface-elevated space-y-3 p-5 text-sm text-muted-foreground">
           {data.note ? <p className="text-foreground/90">{data.note}</p> : null}
           <p>
             Items: <span className="font-medium text-foreground">{data.total}</span>

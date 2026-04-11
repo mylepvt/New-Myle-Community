@@ -2,58 +2,54 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Velvet dark — default theme (premium, addictive; not a clone of legacy UI) */
+/* Velvet dark — SaaS-grade depth: layered surfaces, readable hierarchy, soft luminance */
 @layer base {
   :root {
-    /* Deep violet-black base */
-    --background: 262 32% 6%;
-    --foreground: 280 20% 96%;
-    /* Lifted surfaces */
-    --card: 265 28% 9%;
-    --card-foreground: 280 18% 95%;
-    --popover: 265 30% 8%;
-    --popover-foreground: 280 18% 95%;
-    /* Plum velvet accent */
-    --primary: 292 52% 54%;
+    --background: 262 30% 5.5%;
+    --foreground: 280 18% 97%;
+    --card: 265 26% 11%;
+    --card-foreground: 280 16% 96%;
+    --popover: 265 28% 10%;
+    --popover-foreground: 280 16% 96%;
+    --primary: 292 50% 58%;
     --primary-foreground: 285 100% 99%;
-    --secondary: 265 22% 14%;
-    --secondary-foreground: 280 15% 92%;
-    --muted: 265 18% 14%;
-    --muted-foreground: 265 12% 62%;
-    --accent: 280 35% 16%;
-    --accent-foreground: 280 25% 95%;
-    --destructive: 0 72% 42%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 265 22% 16%;
-    --input: 265 24% 13%;
-    --ring: 292 52% 58%;
-    --radius: 0.625rem;
-    /* Velvet glow (used in gradients / focus) */
-    --velvet-glow: 292 60% 45%;
-    --velvet-deep: 262 40% 4%;
+    --secondary: 265 22% 15%;
+    --secondary-foreground: 280 14% 93%;
+    --muted: 265 18% 15%;
+    --muted-foreground: 265 10% 68%;
+    --accent: 275 28% 18%;
+    --accent-foreground: 280 22% 96%;
+    --destructive: 0 70% 48%;
+    --destructive-foreground: 0 0% 99%;
+    --border: 265 16% 20%;
+    --input: 265 22% 14%;
+    --ring: 292 55% 62%;
+    --radius: 0.75rem;
+    --velvet-glow: 292 58% 48%;
+    --velvet-deep: 262 38% 3.5%;
+    --surface-shine: 0 0% 100%;
   }
 
-  /* Keep in sync if `dark` class is toggled later */
   .dark {
-    --background: 262 32% 6%;
-    --foreground: 280 20% 96%;
-    --card: 265 28% 9%;
-    --card-foreground: 280 18% 95%;
-    --popover: 265 30% 8%;
-    --popover-foreground: 280 18% 95%;
-    --primary: 292 52% 54%;
+    --background: 262 30% 5.5%;
+    --foreground: 280 18% 97%;
+    --card: 265 26% 11%;
+    --card-foreground: 280 16% 96%;
+    --popover: 265 28% 10%;
+    --popover-foreground: 280 16% 96%;
+    --primary: 292 50% 58%;
     --primary-foreground: 285 100% 99%;
-    --secondary: 265 22% 14%;
-    --secondary-foreground: 280 15% 92%;
-    --muted: 265 18% 14%;
-    --muted-foreground: 265 12% 62%;
-    --accent: 280 35% 16%;
-    --accent-foreground: 280 25% 95%;
-    --destructive: 0 72% 42%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 265 22% 16%;
-    --input: 265 24% 13%;
-    --ring: 292 52% 58%;
+    --secondary: 265 22% 15%;
+    --secondary-foreground: 280 14% 93%;
+    --muted: 265 18% 15%;
+    --muted-foreground: 265 10% 68%;
+    --accent: 275 28% 18%;
+    --accent-foreground: 280 22% 96%;
+    --destructive: 0 70% 48%;
+    --destructive-foreground: 0 0% 99%;
+    --border: 265 16% 20%;
+    --input: 265 22% 14%;
+    --ring: 292 55% 62%;
   }
 }
 
@@ -72,21 +68,10 @@
     font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
     background-color: hsl(var(--velvet-deep));
     background-image:
-      radial-gradient(
-        ellipse 130% 90% at 50% -25%,
-        hsl(var(--velvet-glow) / 0.22),
-        transparent 58%
-      ),
-      radial-gradient(
-        ellipse 70% 55% at 110% 85%,
-        hsl(292 45% 28% / 0.14),
-        transparent 50%
-      ),
-      radial-gradient(
-        ellipse 55% 40% at -5% 60%,
-        hsl(262 40% 22% / 0.12),
-        transparent 45%
-      );
+      radial-gradient(ellipse 120% 80% at 50% -30%, hsl(var(--velvet-glow) / 0.28), transparent 55%),
+      radial-gradient(ellipse 65% 50% at 100% 100%, hsl(292 42% 32% / 0.18), transparent 52%),
+      radial-gradient(ellipse 50% 45% at 0% 55%, hsl(262 38% 24% / 0.14), transparent 48%),
+      radial-gradient(ellipse 90% 60% at 50% 120%, hsl(262 45% 8% / 0.85), transparent 55%);
     background-attachment: fixed;
   }
 
@@ -97,5 +82,16 @@
   ::selection {
     background-color: hsl(var(--primary) / 0.35);
     color: hsl(var(--primary-foreground));
+  }
+}
+
+/* Shared elevated panels — use on cards / stub shells for consistent SaaS depth */
+@layer components {
+  .surface-elevated {
+    @apply rounded-xl border border-white/10 bg-card/95 shadow-[0_16px_56px_-20px_rgba(0,0,0,0.75),inset_0_1px_0_0_rgba(255,255,255,0.08)] backdrop-blur-xl;
+  }
+
+  .surface-inset {
+    @apply rounded-lg border border-white/[0.06] bg-black/20 shadow-[inset_0_1px_2px_rgba(0,0,0,0.35)];
   }
 }

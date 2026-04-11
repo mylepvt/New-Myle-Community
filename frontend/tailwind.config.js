@@ -53,6 +53,16 @@ export default {
         lg: 'var(--radius)',
         md: 'calc(var(--radius) - 2px)',
         sm: 'calc(var(--radius) - 4px)',
+        xl: 'calc(var(--radius) + 4px)',
+      },
+      letterSpacing: {
+        'label-wide': '0.08em',
+      },
+      boxShadow: {
+        velvet:
+          '0 0 40px -12px hsl(292 55% 45% / 0.45), inset 0 1px 0 0 hsl(0 0% 100% / 0.06)',
+        'sidebar-glow': 'inset -1px 0 0 hsl(0 0% 100% / 0.05)',
+        'header-bar': '0 1px 0 0 hsl(0 0% 100% / 0.06), 0 8px 32px -12px rgba(0,0,0,0.45)',
       },
     },
   },

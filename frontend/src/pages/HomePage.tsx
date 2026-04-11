@@ -23,11 +23,11 @@ export function HomePage() {
   return (
     <div className="mx-auto flex max-w-lg flex-col gap-6 p-6">
       <div>
-        <h1 className="bg-gradient-to-br from-foreground via-foreground to-primary/80 bg-clip-text text-3xl font-semibold tracking-tight text-transparent">
+        <h1 className="bg-gradient-to-br from-foreground via-foreground to-primary/75 bg-clip-text text-3xl font-semibold tracking-tight text-transparent">
           Myle vl2
         </h1>
       </div>
-      <div className="rounded-xl border border-white/10 bg-card/75 p-4 text-card-foreground shadow-xl shadow-black/30 backdrop-blur-sm">
+      <div className="surface-elevated p-5 text-card-foreground">
         <p className="text-sm font-medium">API</p>
         <div className="mt-3 min-h-[1.5rem] text-sm" aria-live="polite">
           {isPending && (

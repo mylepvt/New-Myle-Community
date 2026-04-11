@@ -33,13 +33,13 @@ export function TeamMembersPage({ title }: Props) {
 
   return (
     <div className="max-w-2xl space-y-6">
-      <h1 className="text-xl font-semibold tracking-tight text-foreground">{title}</h1>
+      <h1 className="text-2xl font-semibold tracking-tight text-foreground">{title}</h1>
       <p className="text-sm text-muted-foreground">
         All accounts in this environment (from the users table). Passwords are never exposed via this API.
       </p>
 
       {isAdmin ? (
-        <div className="rounded-lg border border-white/10 bg-card/40 p-4 text-sm">
+        <div className="surface-elevated p-5 text-sm">
           <h2 className="mb-3 font-medium text-foreground">Add user</h2>
           <p className="mb-3 text-xs text-muted-foreground">
             Creates a password-login account (min. 8 characters). Admin only.
@@ -53,7 +53,7 @@ export function TeamMembersPage({ title }: Props) {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 disabled={createMut.isPending}
-                className="w-full rounded-md border border-white/10 bg-background/40 px-3 py-2 text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40"
+                className="w-full rounded-lg border border-white/[0.1] bg-black/20 px-3 py-2.5 text-foreground shadow-[inset_0_1px_2px_rgba(0,0,0,0.35)] focus:outline-none focus:ring-2 focus:ring-primary/35"
               />
             </label>
             <label className="block min-w-[10rem] flex-1">
@@ -64,7 +64,7 @@ export function TeamMembersPage({ title }: Props) {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 disabled={createMut.isPending}
-                className="w-full rounded-md border border-white/10 bg-background/40 px-3 py-2 text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40"
+                className="w-full rounded-lg border border-white/[0.1] bg-black/20 px-3 py-2.5 text-foreground shadow-[inset_0_1px_2px_rgba(0,0,0,0.35)] focus:outline-none focus:ring-2 focus:ring-primary/35"
               />
             </label>
             <label className="block w-full min-w-[8rem] sm:w-auto">
@@ -73,7 +73,7 @@ export function TeamMembersPage({ title }: Props) {
                 value={newRole}
                 onChange={(e) => setNewRole(e.target.value as Role)}
                 disabled={createMut.isPending}
-                className="w-full rounded-md border border-white/10 bg-background/40 px-3 py-2 text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 sm:w-36"
+                className="w-full rounded-lg border border-white/[0.1] bg-black/20 px-3 py-2.5 text-foreground shadow-[inset_0_1px_2px_rgba(0,0,0,0.35)] focus:outline-none focus:ring-2 focus:ring-primary/35 sm:w-36"
               >
                 {ROLES.map((r) => (
                   <option key={r} value={r}>
@@ -119,13 +119,13 @@ export function TeamMembersPage({ title }: Props) {
         </div>
       ) : null}
       {data ? (
-        <div className="rounded-lg border border-white/10 bg-card/40 p-4 text-sm">
+        <div className="surface-elevated p-5 text-sm">
           <p className="mb-3 font-medium text-foreground">Total: {data.total}</p>
           <ul className="space-y-2">
             {data.items.map((m) => (
               <li
                 key={m.id}
-                className="rounded-md border border-white/5 bg-background/30 px-3 py-2 text-muted-foreground"
+                className="surface-inset px-3 py-2.5 text-muted-foreground"
               >
                 <span className="font-medium text-foreground">{m.email}</span>
                 <span className="mt-0.5 block text-xs">

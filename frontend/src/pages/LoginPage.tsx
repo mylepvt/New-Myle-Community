@@ -98,8 +98,8 @@ export function LoginPage() {
 
   return (
     <div className="flex min-h-dvh flex-col items-center justify-center p-6">
-      <div className="w-full max-w-sm space-y-6 rounded-2xl border border-white/10 bg-card/80 p-8 shadow-2xl shadow-black/40 backdrop-blur-xl">
-        <h1 className="bg-gradient-to-br from-foreground via-foreground to-primary/90 bg-clip-text text-center text-2xl font-semibold tracking-tight text-transparent">
+      <div className="surface-elevated w-full max-w-sm space-y-6 rounded-2xl p-8">
+        <h1 className="bg-gradient-to-br from-foreground via-foreground to-primary/85 bg-clip-text text-center text-2xl font-semibold tracking-tight text-transparent">
           Myle vl2
         </h1>
         {devLoginAllowed ? (
@@ -112,7 +112,7 @@ export function LoginPage() {
               value={role}
               onChange={(e) => setRole(e.target.value as Role)}
               disabled={pending}
-              className="w-full rounded-md border border-white/10 bg-card/80 px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40"
+              className="w-full rounded-lg border border-white/[0.1] bg-black/25 px-3 py-2.5 text-sm text-foreground shadow-[inset_0_1px_2px_rgba(0,0,0,0.35)] focus:outline-none focus:ring-2 focus:ring-primary/35"
             >
               {ROLES.map((r) => (
                 <option key={r} value={r}>
@@ -137,7 +137,7 @@ export function LoginPage() {
           </p>
         ) : null}
 
-        <div className={devLoginAllowed ? 'border-t border-white/10 pt-6' : 'pt-1'}>
+        <div className={devLoginAllowed ? 'border-t border-white/[0.08] pt-6' : 'pt-1'}>
           <p className="mb-3 text-center text-xs font-medium text-muted-foreground">
             {devLoginAllowed ? 'Or sign in with email + password' : 'Sign in with email + password'}
           </p>
@@ -151,7 +151,7 @@ export function LoginPage() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             disabled={pwPending}
-            className="mb-2 w-full rounded-md border border-white/10 bg-card/80 px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40"
+            className="mb-2 w-full rounded-lg border border-white/[0.1] bg-black/25 px-3 py-2.5 text-sm text-foreground shadow-[inset_0_1px_2px_rgba(0,0,0,0.35)] focus:outline-none focus:ring-2 focus:ring-primary/35"
           />
           <label className="sr-only" htmlFor="login-password">
             Password
@@ -164,7 +164,7 @@ export function LoginPage() {
             onChange={(e) => setPassword(e.target.value)}
             placeholder={devLoginAllowed ? `Dev default: ${DEV_SEED_PASSWORD}` : 'Password'}
             disabled={pwPending}
-            className="mb-3 w-full rounded-md border border-white/10 bg-card/80 px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground/70 focus:outline-none focus:ring-2 focus:ring-primary/40"
+            className="mb-3 w-full rounded-lg border border-white/[0.1] bg-black/25 px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground/70 shadow-[inset_0_1px_2px_rgba(0,0,0,0.35)] focus:outline-none focus:ring-2 focus:ring-primary/35"
           />
           <Button
             type="button"
