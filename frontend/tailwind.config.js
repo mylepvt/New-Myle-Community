@@ -102,13 +102,13 @@ export default {
       },
       boxShadow: {
         'glass-glow':
-          '0 0 40px -12px hsl(33 100% 48% / 0.28), inset 0 1px 0 0 hsl(0 0% 100% / 0.06)',
+          '0 0 40px -12px hsl(344 68% 48% / 0.30), inset 0 1px 0 0 hsl(0 0% 100% / 0.06)',
         'glass-inset':
           'inset 0 1px 2px rgba(0,0,0,0.2), inset 0 -1px 0 rgba(255,255,255,0.03)',
         'sidebar-glow':
-          'inset -1px 0 0 hsl(33 60% 50% / 0.12)',
+          'inset -1px 0 0 hsl(344 50% 42% / 0.14)',
         'header-bar':
-          '0 1px 0 0 hsl(33 40% 40% / 0.15), 0 12px 40px -16px rgba(0,0,0,0.5)',
+          '0 1px 0 0 hsl(344 38% 32% / 0.18), 0 12px 40px -16px rgba(0,0,0,0.5)',
       },
     },
   },

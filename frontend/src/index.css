@@ -3,67 +3,67 @@
 @tailwind utilities;
 
 /*
- * Myle — admin dashboard aesthetic: #0F111A canvas, #161B22 cards, orange accent.
+ * Myle — admin dashboard aesthetic: deep wine canvas, bordeaux accent.
  */
 @layer base {
   :root {
-    --background: 228 27% 8%;
-    --foreground: 210 33% 93%;
-    --surface: 220 22% 9%;
-    --card: 217 22% 11%;
-    --card-foreground: 210 33% 93%;
-    --popover: 217 22% 10%;
-    --popover-foreground: 210 33% 93%;
-    /* Orange CTA — #FF8C00 */
-    --primary: 33 100% 50%;
-    --primary-foreground: 228 27% 8%;
-    --secondary: 220 18% 12%;
-    --secondary-foreground: 210 25% 90%;
-    --muted: 218 18% 14%;
-    --muted-foreground: 215 14% 65%;
-    --accent: 220 20% 16%;
-    --accent-foreground: 210 28% 95%;
+    --background: 342 22% 7%;
+    --foreground: 344 18% 93%;
+    --surface: 342 20% 8%;
+    --card: 342 20% 10%;
+    --card-foreground: 344 18% 93%;
+    --popover: 342 20% 9%;
+    --popover-foreground: 344 18% 93%;
+    /* Wine / Bordeaux CTA — rich crimson */
+    --primary: 344 68% 52%;
+    --primary-foreground: 344 15% 96%;
+    --secondary: 342 18% 13%;
+    --secondary-foreground: 344 14% 90%;
+    --muted: 342 16% 14%;
+    --muted-foreground: 342 10% 62%;
+    --accent: 342 18% 16%;
+    --accent-foreground: 344 20% 95%;
     --destructive: 0 84% 61%;
     --destructive-foreground: 0 0% 100%;
-    --border: 220 16% 20%;
-    --input: 220 18% 13%;
-    --ring: 33 100% 50%;
+    --border: 342 14% 19%;
+    --input: 342 16% 12%;
+    --ring: 344 68% 52%;
     --radius: 0.75rem;
     --success: 142 71% 45%;
     --success-foreground: 144 100% 97%;
     --warning: 38 92% 50%;
     --warning-foreground: 48 100% 97%;
-    --glass-ambient: 33 90% 48%;
-    --glass-base: 228 27% 8%;
-    --subtle: 218 9% 46%;
+    --glass-ambient: 344 68% 45%;
+    --glass-base: 342 22% 7%;
+    --subtle: 342 8% 44%;
   }
 
   .dark {
-    --background: 228 27% 8%;
-    --foreground: 210 33% 93%;
-    --surface: 220 22% 9%;
-    --card: 217 22% 11%;
-    --card-foreground: 210 33% 93%;
-    --popover: 217 22% 10%;
-    --popover-foreground: 210 33% 93%;
-    --primary: 33 100% 50%;
-    --primary-foreground: 228 27% 8%;
-    --secondary: 220 18% 12%;
-    --secondary-foreground: 210 25% 90%;
-    --muted: 218 18% 14%;
-    --muted-foreground: 215 14% 65%;
-    --accent: 220 20% 16%;
-    --accent-foreground: 210 28% 95%;
+    --background: 342 22% 7%;
+    --foreground: 344 18% 93%;
+    --surface: 342 20% 8%;
+    --card: 342 20% 10%;
+    --card-foreground: 344 18% 93%;
+    --popover: 342 20% 9%;
+    --popover-foreground: 344 18% 93%;
+    --primary: 344 68% 52%;
+    --primary-foreground: 344 15% 96%;
+    --secondary: 342 18% 13%;
+    --secondary-foreground: 344 14% 90%;
+    --muted: 342 16% 14%;
+    --muted-foreground: 342 10% 62%;
+    --accent: 342 18% 16%;
+    --accent-foreground: 344 20% 95%;
     --destructive: 0 84% 61%;
     --destructive-foreground: 0 0% 100%;
-    --border: 220 16% 20%;
-    --input: 220 18% 13%;
-    --ring: 33 100% 50%;
+    --border: 342 14% 19%;
+    --input: 342 16% 12%;
+    --ring: 344 68% 52%;
     --success: 142 71% 45%;
     --success-foreground: 144 100% 97%;
     --warning: 38 92% 50%;
     --warning-foreground: 48 100% 97%;
-    --subtle: 218 9% 46%;
+    --subtle: 342 8% 44%;
   }
 }
 
@@ -75,6 +75,7 @@
   html {
     @apply scroll-smooth;
     color-scheme: dark;
+    font-optical-sizing: auto;
   }
 
   body {
@@ -82,10 +83,10 @@
     font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
     background-color: hsl(var(--glass-base));
     background-image:
-      radial-gradient(ellipse 100% 80% at 50% -20%, hsl(var(--glass-ambient) / 0.14), transparent 55%),
-      radial-gradient(ellipse 50% 40% at 100% 0%, hsl(33 80% 45% / 0.06), transparent 45%),
-      radial-gradient(ellipse 45% 35% at 0% 70%, hsl(228 40% 25% / 0.12), transparent 50%),
-      radial-gradient(ellipse 100% 60% at 50% 110%, hsl(228 30% 4% / 0.95), transparent 55%);
+      radial-gradient(ellipse 100% 80% at 50% -20%, hsl(var(--glass-ambient) / 0.16), transparent 55%),
+      radial-gradient(ellipse 50% 40% at 100% 0%, hsl(344 60% 40% / 0.07), transparent 45%),
+      radial-gradient(ellipse 45% 35% at 0% 70%, hsl(342 30% 18% / 0.12), transparent 50%),
+      radial-gradient(ellipse 100% 60% at 50% 110%, hsl(342 30% 3% / 0.95), transparent 55%);
     background-attachment: fixed;
   }
 
@@ -95,14 +96,40 @@
 
   h1 {
     @apply font-heading text-ds-h1 text-foreground;
+    letter-spacing: -0.03em;
   }
 
   h2 {
     @apply font-heading text-ds-h2 text-foreground;
+    letter-spacing: -0.025em;
   }
 
   h3 {
     @apply font-heading text-ds-h3 font-medium text-foreground;
+    letter-spacing: -0.015em;
+  }
+
+  /* iOS safe areas */
+  body {
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: hsl(344 30% 28%);
+    border-radius: 3px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(344 50% 40%);
   }
 
   ::selection {
