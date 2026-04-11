@@ -106,3 +106,4 @@ When mapping a legacy feature, point the **new** row to the concrete router modu
 
 - When adding a dashboard screen: update **`DASHBOARD_ROUTE_DEFS`** first, then add or adjust a row in the **inventory** table above.
 - When legacy parity is agreed: fill **Parity matrix** — never claim parity in chat or PR description without updating this file.
+- **Implementation order (waves, stub→full checklist):** **`docs/PARITY_ROLLOUT_PLAN.md`**.

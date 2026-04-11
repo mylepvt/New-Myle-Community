@@ -37,6 +37,8 @@ export function usePwaInstall() {
 
   const inDismissCooldown = useMemo(() => {
     void dismissVersion
+    // Expiry is time-based; re-check when user dismisses (dismissVersion bumps).
+    // eslint-disable-next-line react-hooks/purity -- need wall clock vs stored deadline
     return Date.now() < getDismissUntilMs()
   }, [dismissVersion])
 

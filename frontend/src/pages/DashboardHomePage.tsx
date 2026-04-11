@@ -191,60 +191,96 @@ export function DashboardHomePage() {
           </div>
         ) : (
           <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-            <Card className="border-primary/20">
-              <CardContent className="pt-6">
-                <p className="text-ds-caption font-medium uppercase tracking-wide text-muted-foreground">
-                  Active pipeline
-                </p>
-                <p className="mt-2 font-heading text-3xl font-semibold tabular-nums text-foreground">
-                  {metrics.pipelineTotal}
-                </p>
-                <p className="mt-1 text-ds-caption text-subtle">
-                  Leads in your scope (excl. pool / archive)
-                </p>
-              </CardContent>
-            </Card>
-            <Card className="border-primary/20">
-              <CardContent className="pt-6">
-                <p className="text-ds-caption font-medium uppercase tracking-wide text-muted-foreground">
-                  Open follow-ups
-                </p>
-                <p className="mt-2 font-heading text-3xl font-semibold tabular-nums text-primary">
-                  {openFollowUps}
-                </p>
-                <p className="mt-1 text-ds-caption text-subtle">
-                  Not completed
-                </p>
-              </CardContent>
-            </Card>
-            <Card className="border-primary/20">
-              <CardContent className="pt-6">
-                <p className="text-ds-caption font-medium uppercase tracking-wide text-muted-foreground">
-                  Won
-                </p>
-                <p className="mt-2 font-heading text-3xl font-semibold tabular-nums text-success">
-                  {metrics.won}
-                </p>
-                <p className="mt-1 text-ds-caption text-subtle">
-                  {metrics.winRatePct !== null
-                    ? `Win rate ${metrics.winRatePct}% (won / won+lost)`
-                    : 'No closed outcomes yet'}
-                </p>
-              </CardContent>
-            </Card>
-            <Card className="border-primary/20">
-              <CardContent className="pt-6">
-                <p className="text-ds-caption font-medium uppercase tracking-wide text-muted-foreground">
-                  New leads
-                </p>
-                <p className="mt-2 font-heading text-3xl font-semibold tabular-nums text-foreground">
-                  {metrics.newLeads}
-                </p>
-                <p className="mt-1 text-ds-caption text-subtle">
-                  In &quot;new&quot; stage
-                </p>
-              </CardContent>
-            </Card>
+            <Link
+              to="/dashboard/work/workboard"
+              className="block rounded-xl no-underline outline-none ring-offset-background transition hover:opacity-95 focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2"
+            >
+              <Card className="h-full border-primary/20 transition-colors hover:border-primary/35">
+                <CardContent className="pt-6">
+                  <p className="text-ds-caption font-medium uppercase tracking-wide text-muted-foreground">
+                    Active pipeline
+                  </p>
+                  <p className="mt-2 font-heading text-3xl font-semibold tabular-nums text-foreground">
+                    {metrics.pipelineTotal}
+                  </p>
+                  <p className="mt-1 text-ds-caption text-subtle">
+                    Leads in your scope (excl. pool / archive) — open workboard
+                  </p>
+                </CardContent>
+              </Card>
+            </Link>
+            {role === 'admin' || role === 'leader' ? (
+              <Link
+                to="/dashboard/work/follow-ups"
+                className="block rounded-xl no-underline outline-none ring-offset-background transition hover:opacity-95 focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2"
+              >
+                <Card className="h-full border-primary/20 transition-colors hover:border-primary/35">
+                  <CardContent className="pt-6">
+                    <p className="text-ds-caption font-medium uppercase tracking-wide text-muted-foreground">
+                      Open follow-ups
+                    </p>
+                    <p className="mt-2 font-heading text-3xl font-semibold tabular-nums text-primary">
+                      {openFollowUps}
+                    </p>
+                    <p className="mt-1 text-ds-caption text-subtle">
+                      Not completed — open queue
+                    </p>
+                  </CardContent>
+                </Card>
+              </Link>
+            ) : (
+              <Card className="border-primary/20">
+                <CardContent className="pt-6">
+                  <p className="text-ds-caption font-medium uppercase tracking-wide text-muted-foreground">
+                    Open follow-ups
+                  </p>
+                  <p className="mt-2 font-heading text-3xl font-semibold tabular-nums text-primary">
+                    {openFollowUps}
+                  </p>
+                  <p className="mt-1 text-ds-caption text-subtle">
+                    Not completed (follow-ups queue is for admin / leader)
+                  </p>
+                </CardContent>
+              </Card>
+            )}
+            <Link
+              to="/dashboard/work/leads"
+              className="block rounded-xl no-underline outline-none ring-offset-background transition hover:opacity-95 focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2"
+            >
+              <Card className="h-full border-primary/20 transition-colors hover:border-primary/35">
+                <CardContent className="pt-6">
+                  <p className="text-ds-caption font-medium uppercase tracking-wide text-muted-foreground">
+                    Won
+                  </p>
+                  <p className="mt-2 font-heading text-3xl font-semibold tabular-nums text-success">
+                    {metrics.won}
+                  </p>
+                  <p className="mt-1 text-ds-caption text-subtle">
+                    {metrics.winRatePct !== null
+                      ? `Win rate ${metrics.winRatePct}% (won / won+lost) — open leads`
+                      : 'No closed outcomes yet — open leads'}
+                  </p>
+                </CardContent>
+              </Card>
+            </Link>
+            <Link
+              to="/dashboard/work/leads"
+              className="block rounded-xl no-underline outline-none ring-offset-background transition hover:opacity-95 focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2"
+            >
+              <Card className="h-full border-primary/20 transition-colors hover:border-primary/35">
+                <CardContent className="pt-6">
+                  <p className="text-ds-caption font-medium uppercase tracking-wide text-muted-foreground">
+                    New leads
+                  </p>
+                  <p className="mt-2 font-heading text-3xl font-semibold tabular-nums text-foreground">
+                    {metrics.newLeads}
+                  </p>
+                  <p className="mt-1 text-ds-caption text-subtle">
+                    In &quot;new&quot; stage — open list
+                  </p>
+                </CardContent>
+              </Card>
+            </Link>
           </div>
         )}
       </div>
@@ -301,27 +337,33 @@ export function DashboardHomePage() {
             <CardDescription>Jump to common screens</CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col gap-2">
-            {quickActions.map((a) => (
-              <Button
-                key={a.path}
-                variant="outline"
-                className="justify-between"
-                asChild
-              >
-                <Link to={a.to}>
-                  <span className="flex min-w-0 items-center gap-2">
-                    <a.Icon className="size-4 shrink-0" aria-hidden />
-                    <span className="truncate">{a.label}</span>
-                    {a.badgeCount != null ? (
-                      <Badge variant="primary" className="ml-1 shrink-0">
-                        {a.badgeCount}
-                      </Badge>
-                    ) : null}
-                  </span>
-                  <ArrowRight className="size-4 shrink-0 opacity-60" />
-                </Link>
-              </Button>
-            ))}
+            {quickActions.map((action) => {
+              const Icon = action.Icon
+              return (
+                <Button
+                  key={action.path}
+                  variant="outline"
+                  className="h-auto w-full p-0 font-normal"
+                  asChild
+                >
+                  <Link
+                    to={action.to}
+                    className="inline-flex w-full items-center justify-between gap-3 px-4 py-3 no-underline"
+                  >
+                    <span className="flex min-w-0 items-center gap-2">
+                      <Icon className="size-4 shrink-0 text-primary" aria-hidden />
+                      <span className="truncate font-medium text-foreground">{action.label}</span>
+                      {action.badgeCount != null ? (
+                        <Badge variant="primary" className="ml-1 shrink-0">
+                          {action.badgeCount}
+                        </Badge>
+                      ) : null}
+                    </span>
+                    <ArrowRight className="size-4 shrink-0 opacity-60" aria-hidden />
+                  </Link>
+                </Button>
+              )
+            })}
           </CardContent>
         </Card>
       </div>

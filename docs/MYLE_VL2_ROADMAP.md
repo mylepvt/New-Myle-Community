@@ -20,6 +20,16 @@ This document defines the **full plan** and **phase-by-phase execution order**. 
 
 **Rough overall picture:** Roadmap **V1** items in this repo are **implemented**; **OAuth**, org-wide analytics persistence, **offline-first PWA**, and **non-English locales** are **explicitly out of V1** unless product reopens them.
 
+### Product north star — same app shape, new stack
+
+**Goal (you + Sam):** Users ko **wahi familiar cheez** mile — **Dashboard**, **Workboard**, **Leads**, **engines / system / analytics**, **team & finance** — jahan purane app mein **routing aur wiring theek** thi, lekin stack **slow** tha ya kuch **jagah polish/feature** gap thi.
+
+**Myle vl2 = same product map on latest stack:** FastAPI + Vite/React + Postgres, **server-first** rules, TanStack Query, CI, OpenAPI — taaki **fast**, **consistent**, aur **extend** karna aasaan ho.
+
+**Parity ka tareeka:** Feature-by-feature **evidence** se (`docs/LEGACY_PARITY_MAPPING.md` + `docs/PARITY_ROLLOUT_PLAN.md`) — guess nahi. Stubs ko gradually **full** surfaces mein badhao jab spec clear ho.
+
+**Existing team (old app → vl2):** Smooth shift ke liye — same labels / flows jahan ho sake, parallel run, training order, aur **old URL → new path** table jab evidence mile. Playbook: **`docs/TEAM_MIGRATION_PLAYBOOK.md`**. **Week 1 execution start:** **`docs/PARITY_SPRINT_1.md`**.
+
 ---
 
 ## How we work (process)
@@ -32,7 +42,7 @@ This document defines the **full plan** and **phase-by-phase execution order**. 
 
 ## Architecture & smart UX (beyond the legacy app)
 
-**Legacy parity (no guesswork):** Do not claim “same as old app” without filling **`docs/LEGACY_PARITY_MAPPING.md`** — that file holds the **verified** new-app inventory (routes, stubs, code pointers) and a **parity matrix** whose legacy side must include **evidence** (legacy path/repo/spec/sign-off).
+**Legacy parity (no guesswork):** Do not claim “same as old app” without filling **`docs/LEGACY_PARITY_MAPPING.md`** — that file holds the **verified** new-app inventory (routes, stubs, code pointers) and a **parity matrix** whose legacy side must include **evidence** (legacy path/repo/spec/sign-off). **Why many taps felt dead:** stubs vs full UI + non-linked KPIs — see **`docs/DASHBOARD_UX_AND_PARITY.md`**. **Step-by-step old vs new rollout (waves + checklists):** **`docs/PARITY_ROLLOUT_PLAN.md`**.
 
 **Goal:** Avoid the “feel” of the old stack — **hardcoded toggles**, **different rules** on UI vs server, and **magic state**.
 

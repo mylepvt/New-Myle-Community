@@ -1,3 +1,4 @@
+import { type FormEvent, useState } from 'react'
 import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom'
 import { Bell, Home, LogOut, Menu, PanelLeftClose, Search } from 'lucide-react'
 
@@ -25,6 +26,17 @@ export function DashboardLayout() {
   const navigate = useNavigate()
   const { sidebarOpen, toggleSidebar } = useShellStore()
   const logout = useAuthStore((s) => s.logout)
+  const [headerSearch, setHeaderSearch] = useState('')
+
+  function submitHeaderSearch(e: FormEvent) {
+    e.preventDefault()
+    const q = headerSearch.trim()
+    if (q) {
+      navigate(`/dashboard/work/leads?q=${encodeURIComponent(q)}`)
+    } else {
+      navigate('/dashboard/work/leads')
+    }
+  }
 
   const navFlags = {
     intelligence: meta?.features.intelligence ?? true,
@@ -169,18 +181,26 @@ export function DashboardLayout() {
             {sidebarOpen ? <PanelLeftClose /> : <Menu />}
           </Button>
 
-          <div className="relative mx-auto hidden max-w-xl flex-1 sm:block">
+          <form
+            className="relative mx-auto hidden max-w-xl flex-1 sm:block"
+            onSubmit={submitHeaderSearch}
+            role="search"
+          >
             <Search
               className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
               aria-hidden
             />
             <input
               type="search"
-              placeholder="Search leads, members, reports…"
+              name="q"
+              value={headerSearch}
+              onChange={(e) => setHeaderSearch(e.target.value)}
+              placeholder="Search leads (Enter → open list)"
               className="h-10 w-full rounded-full border border-border bg-muted/50 pl-10 pr-4 text-ds-body text-foreground placeholder:text-muted-foreground shadow-glass-inset focus:border-primary/45 focus:outline-none focus:ring-2 focus:ring-primary/20"
-              aria-label="Search"
+              aria-label="Search leads"
+              autoComplete="off"
             />
-          </div>
+          </form>
 
           <div className="flex min-w-0 flex-1 items-center justify-end gap-2 sm:flex-initial sm:gap-3">
             <Button

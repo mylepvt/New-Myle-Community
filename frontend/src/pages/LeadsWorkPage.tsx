@@ -1,5 +1,5 @@
 import { type FormEvent, useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -30,10 +30,16 @@ export function LeadsWorkPage({ title, listMode = 'active' }: Props) {
   const archivedOnly = listMode === 'archived'
   const leadsListMode = listMode === 'archived' ? 'archived' : 'active'
   const { role } = useDashboardShellRole()
-  const [qInput, setQInput] = useState('')
-  const [filters, setFilters] = useState<LeadListFilters>(emptyFilters)
+  const [searchParams] = useSearchParams()
+  const qParam = searchParams.get('q') ?? ''
+  const [qInput, setQInput] = useState(qParam)
+  const [filters, setFilters] = useState<LeadListFilters>({ ...emptyFilters, q: qParam })
   const [newStatus, setNewStatus] = useState<LeadStatus>('new')
   const [name, setName] = useState('')
+
+  useEffect(() => {
+    setQInput(qParam)
+  }, [qParam])
 
   useEffect(() => {
     const id = window.setTimeout(() => {

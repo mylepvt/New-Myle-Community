@@ -139,6 +139,18 @@ Stub = contract only; **Done** = backed by DB + rules.
 
 ---
 
+## Parity rollout (old app → vl2 — tick in PRs)
+
+**Runbook:** `docs/PARITY_SPRINT_1.md` (Week 1) · `docs/PARITY_ROLLOUT_PLAN.md` (waves) · `docs/LEGACY_PARITY_MAPPING.md` (matrix).
+
+- [ ] **Sprint 1 — Product:** Legacy nav export + ≥5 matrix rows with evidence refs (`LEGACY_PARITY_MAPPING.md`)
+- [x] **Sprint 1 — Eng (automated baseline):** `pytest` + `npm run build` + `npm test` + `npm run lint` green (`PARITY_SPRINT_1.md` Day 1)
+- [ ] **Sprint 1 — Eng:** Wave A manual verify checklist complete (`PARITY_SPRINT_1.md`); notes / issues filed
+- [ ] **Sprint 1 — Team:** Pilot users + support channel named (`TEAM_MIGRATION_PLAYBOOK.md`)
+- [ ] Next: first **stub → full** only after spec + matrix row (see `PARITY_ROLLOUT_PLAN.md`)
+
+---
+
 ## Outstanding (optional / future)
 
 | Item | Notes |
