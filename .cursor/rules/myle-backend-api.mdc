@@ -22,6 +22,7 @@ alwaysApply: false
 
 ## DB / migrations
 - Schema changes = **SQLAlchemy model** + **Alembic revision** — keep model and migration in sync; don’t hand-edit prod DB without a migration story.
+- **Legacy SQLite (old Flask `leads.db`) → Postgres:** offline CLI **`scripts/import_legacy_sqlite.py`** (run from **`backend/`**, same **`DATABASE_URL`** as API); mapping **`legacy/LEGACY_TO_VL2_MAPPING.md`**; ops notes **`backend/README.md`**. Not an HTTP route.
 
 ## Secrets & config
 - No secrets in code — use **env** (`Settings` / `DATABASE_URL`, etc.). `.env` stays gitignored; document keys in **`.env.example`** only.

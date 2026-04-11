@@ -39,6 +39,7 @@ Tick items in Git/PRs as you ship.
 ## Backend — database
 
 - [x] Async SQLAlchemy engine + `get_db`
+- [x] **Legacy data path:** Flask SQLite → vl2 Postgres — `backend/scripts/import_legacy_sqlite.py` + `backend/legacy/LEGACY_TO_VL2_MAPPING.md` (optional env: `LEGACY_SQLITE_PATH`, `IMPORT_DEFAULT_PASSWORD`; run from `backend/` with same `DATABASE_URL` as API)
 - [x] Alembic + migrations; **`examples` removed** (no `Example` model)
 - [x] `users` table + Alembic migration + seeded dev accounts (`dev-{admin|leader|team}@myle.local`); JWT `sub` = user id; dev **`hashed_password`** via migration
 - [x] Password sign-in (bcrypt) + `hashed_password` + **access + refresh** JWT cookies (`JWT_ACCESS_MINUTES`, `JWT_REFRESH_DAYS`, `POST /api/v1/auth/refresh`)
