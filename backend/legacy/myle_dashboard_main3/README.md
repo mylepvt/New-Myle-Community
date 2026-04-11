@@ -8,3 +8,6 @@
 
 - `execution_enforcement.py` — Team funnel, follow-up attack SQL, downline aggregates, admin at-risk / weak members / leak map, stale redistribution.  
   **vl2:** `app/services/execution_enforcement.py` + `app/api/v1/execution.py`. At-risk staleness uses last-activity `coalesce` on `Lead` (no `updated_at` column yet). `POST /execution/stale-redistribute` returns `implemented: false` until `stale_worker`-style columns exist.
+
+- `reliability.py` — Request correlation id, incident codes, structured `[reliability]` log lines, `safe_user_error`.  
+  **vl2:** `app/core/reliability.py`; request ids via `RequestIdMiddleware` + `ensure_request_id`. Unhandled exceptions log/return `incident_id` (`API-500-…`) in `app/core/errors.py`.

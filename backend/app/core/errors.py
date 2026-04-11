@@ -10,6 +10,8 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
+from app.core import reliability
+
 logger = logging.getLogger(__name__)
 
 
@@ -17,14 +19,21 @@ def _request_id(request: Request) -> str | None:
     return getattr(request.state, "request_id", None)
 
 
-def error_payload(*, code: str, message: str, request: Request) -> dict[str, Any]:
-    return {
-        "error": {
-            "code": code,
-            "message": message,
-            "request_id": _request_id(request),
-        }
+def error_payload(
+    *,
+    code: str,
+    message: str,
+    request: Request,
+    incident_id: str | None = None,
+) -> dict[str, Any]:
+    err: dict[str, Any] = {
+        "code": code,
+        "message": message,
+        "request_id": _request_id(request),
     }
+    if incident_id:
+        err["incident_id"] = incident_id
+    return {"error": err}
 
 
 def _http_exception_code(status_code: int) -> str:
@@ -70,11 +79,20 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
 
 
 async def unhandled_exception_handler(request: Request, exc: Exception) -> JSONResponse:
+    inc = reliability.incident_code("API-500")
+    reliability.emit_reliability_event(
+        logger,
+        "unhandled_exception",
+        request=request,
+        incident_id=inc,
+        exc_type=type(exc).__name__,
+    )
     logger.exception("Unhandled error: %s", exc)
     body = error_payload(
         code="internal_error",
         message="Internal server error",
         request=request,
+        incident_id=inc,
     )
     return JSONResponse(status_code=500, content=body)
 
