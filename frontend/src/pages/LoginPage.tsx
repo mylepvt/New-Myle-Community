@@ -131,7 +131,7 @@ export function LoginPage() {
 
         <div
           className={cn(
-            'surface-elevated space-y-6 rounded-2xl border-white/[0.14] p-8 sm:p-9',
+            'surface-elevated space-y-6 rounded-2xl p-8 sm:p-9',
             'shadow-[0_24px_80px_-28px_rgba(0,0,0,0.75)]',
           )}
         >

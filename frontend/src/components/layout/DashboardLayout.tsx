@@ -1,9 +1,11 @@
 import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom'
-import { LogOut, Menu, PanelLeftClose } from 'lucide-react'
+import { Bell, Home, LogOut, Menu, PanelLeftClose, Search } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { DashboardOutletErrorBoundary } from '@/components/routing/DashboardOutletErrorBoundary'
+import { getDashboardNavIcon } from '@/config/dashboard-nav-icons'
 import { filterDashboardNav, resolveItemLabel } from '@/config/dashboard-nav'
+import { useAuthMeQuery } from '@/hooks/use-auth-me-query'
 import { useMetaQuery } from '@/hooks/use-meta-query'
 import { useRealtimeInvalidation } from '@/hooks/use-realtime-invalidation'
 import { useSyncRoleFromMe } from '@/hooks/use-sync-role-from-me'
@@ -18,6 +20,7 @@ export function DashboardLayout() {
   useSyncRoleFromMe()
   useRealtimeInvalidation(true)
   const { data: meta } = useMetaQuery()
+  const { data: me } = useAuthMeQuery()
   const navigate = useNavigate()
   const { sidebarOpen, toggleSidebar } = useShellStore()
   const role = useRoleStore((s) => s.role)
@@ -30,6 +33,12 @@ export function DashboardLayout() {
   const sections = filterDashboardNav(role, navFlags)
   const envLabel = meta?.environment
 
+  const displayInitial =
+    me?.email?.[0]?.toUpperCase() ??
+    me?.role?.[0]?.toUpperCase() ??
+    role[0]?.toUpperCase() ??
+    '?'
+
   async function handleLogout() {
     try {
       await authLogout()
@@ -41,44 +50,44 @@ export function DashboardLayout() {
   }
 
   return (
-    <div className="flex min-h-dvh">
+    <div className="flex min-h-dvh bg-background">
       <aside
         className={cn(
-          'flex flex-col border-r border-white/[0.1] bg-white/[0.04] shadow-sidebar-glow backdrop-blur-2xl backdrop-saturate-150 transition-[width] duration-300 ease-out',
-          sidebarOpen ? 'w-60 shrink-0' : 'w-0 shrink-0 overflow-hidden border-0',
+          'flex min-h-dvh shrink-0 flex-col border-r border-primary/15 bg-surface shadow-sidebar-glow transition-[width] duration-300 ease-out',
+          sidebarOpen ? 'w-[17rem]' : 'w-0 overflow-hidden border-0',
         )}
       >
-        <div className="flex h-14 shrink-0 items-center border-b border-white/[0.08] bg-white/[0.03] px-3 shadow-header-bar backdrop-blur-md">
-          <div className="flex min-w-0 items-center gap-2">
-            <Link
-              to="/dashboard"
-              className="truncate bg-gradient-to-r from-foreground via-foreground to-primary/75 bg-clip-text text-sm font-semibold tracking-tight text-transparent"
+        <div className="flex h-16 shrink-0 items-center border-b border-primary/10 px-4">
+          <Link
+            to="/dashboard"
+            className="font-heading text-lg font-semibold tracking-tight text-foreground"
+          >
+            Myle
+          </Link>
+          {envLabel && envLabel !== 'production' ? (
+            <span
+              className="ml-2 shrink-0 rounded border border-warning/40 bg-warning/10 px-1.5 py-0.5 text-[0.6rem] font-semibold uppercase tracking-wide text-warning"
+              title="Server-reported environment (APP_ENV)"
             >
-              Myle
-            </Link>
-            {envLabel && envLabel !== 'production' ? (
-              <span
-                className="shrink-0 rounded border border-amber-500/35 bg-amber-500/10 px-1.5 py-0.5 text-[0.6rem] font-semibold uppercase tracking-wide text-amber-200/90"
-                title="Server-reported environment (APP_ENV)"
-              >
-                {envLabel}
-              </span>
-            ) : null}
-          </div>
+              {envLabel}
+            </span>
+          ) : null}
         </div>
-        <nav className="flex flex-1 flex-col gap-4 overflow-y-auto overflow-x-hidden p-2 pb-4">
+
+        <nav className="flex flex-1 flex-col gap-1 overflow-y-auto overflow-x-hidden px-2 py-3 pb-2">
           {sections.map((section) => (
             <div key={section.id}>
               {section.label ? (
-                <p className="mb-1.5 px-2 text-[0.62rem] font-semibold uppercase tracking-label-wide text-muted-foreground/75">
+                <p className="mb-2 px-3 text-[0.62rem] font-semibold uppercase tracking-label-wide text-muted-foreground/80">
                   {section.label}
                 </p>
               ) : null}
-              <ul className="flex flex-col gap-0.5">
+              <ul className="flex flex-col gap-1">
                 {section.items.map((item) => {
                   const to =
                     item.path === '' ? '/dashboard' : `/dashboard/${item.path}`
                   const label = resolveItemLabel(item, role)
+                  const Icon = getDashboardNavIcon(item.path)
                   return (
                     <li key={item.path || 'index'}>
                       <NavLink
@@ -86,14 +95,33 @@ export function DashboardLayout() {
                         end={item.end ?? false}
                         className={({ isActive }) =>
                           cn(
-                            'relative block rounded-lg py-2.5 pl-3 pr-3 text-sm transition-all duration-200',
+                            'group relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-all duration-200',
                             isActive
-                              ? 'bg-gradient-to-r from-primary/18 to-primary/[0.06] font-medium text-primary shadow-glass-glow before:absolute before:inset-y-1 before:left-0 before:w-[3px] before:rounded-full before:bg-primary before:shadow-[0_0_14px_hsl(var(--primary)/0.55)]'
-                              : 'text-muted-foreground hover:bg-white/[0.05] hover:text-foreground',
+                              ? 'border border-primary/45 bg-primary/[0.09] font-semibold text-primary shadow-glass-glow'
+                              : 'border border-transparent text-muted-foreground hover:border-border hover:bg-muted/40 hover:text-foreground',
                           )
                         }
                       >
-                        {label}
+                        {({ isActive }) => (
+                          <>
+                            <Icon
+                              className={cn(
+                                'size-[1.125rem] shrink-0',
+                                isActive ? 'text-primary' : 'opacity-80',
+                              )}
+                              aria-hidden
+                            />
+                            <span className="min-w-0 flex-1 truncate">
+                              {label}
+                            </span>
+                            {isActive ? (
+                              <span
+                                className="size-2 shrink-0 rounded-full bg-primary shadow-[0_0_10px_hsl(var(--primary)/0.9)]"
+                                aria-hidden
+                              />
+                            ) : null}
+                          </>
+                        )}
                       </NavLink>
                     </li>
                   )
@@ -102,21 +130,58 @@ export function DashboardLayout() {
             </div>
           ))}
         </nav>
+
+        <div className="mt-auto shrink-0 border-t border-border/80 p-3">
+          <Button
+            type="button"
+            variant="outline"
+            className="w-full gap-2 border-destructive/45 text-destructive hover:bg-destructive/10 hover:text-destructive"
+            onClick={() => void handleLogout()}
+          >
+            <LogOut className="size-4" aria-hidden />
+            Log out
+          </Button>
+        </div>
       </aside>
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="flex h-14 shrink-0 items-center gap-3 border-b border-white/[0.1] bg-white/[0.04] px-3 shadow-header-bar backdrop-blur-2xl backdrop-saturate-150">
+        <header className="flex h-16 shrink-0 items-center gap-3 border-b border-primary/10 bg-background/90 px-3 shadow-header-bar backdrop-blur-xl">
           <Button
             type="button"
             variant="ghost"
             size="icon"
+            className="shrink-0 text-muted-foreground hover:text-foreground"
             onClick={toggleSidebar}
             aria-label="Toggle sidebar"
           >
             {sidebarOpen ? <PanelLeftClose /> : <Menu />}
           </Button>
 
-          <div className="flex min-w-0 flex-1 justify-end sm:justify-start">
+          <div className="relative mx-auto hidden max-w-xl flex-1 sm:block">
+            <Search
+              className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
+              aria-hidden
+            />
+            <input
+              type="search"
+              placeholder="Search leads, members, reports…"
+              className="h-10 w-full rounded-full border border-border bg-muted/50 pl-10 pr-4 text-ds-body text-foreground placeholder:text-muted-foreground shadow-glass-inset focus:border-primary/45 focus:outline-none focus:ring-2 focus:ring-primary/20"
+              aria-label="Search"
+            />
+          </div>
+
+          <div className="flex min-w-0 flex-1 items-center justify-end gap-2 sm:flex-initial sm:gap-3">
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              className="relative hidden text-muted-foreground hover:text-foreground sm:inline-flex"
+              aria-label="Notifications"
+            >
+              <Bell className="size-5" />
+              <span className="absolute right-1.5 top-1.5 size-2 rounded-full bg-primary ring-2 ring-background" />
+            </Button>
+
             <label className="sr-only" htmlFor="role-preview">
               Preview as role
             </label>
@@ -124,7 +189,7 @@ export function DashboardLayout() {
               id="role-preview"
               value={role}
               onChange={(e) => setRole(e.target.value as Role)}
-              className="max-w-[9rem] rounded-lg border border-white/[0.12] bg-white/[0.06] px-2.5 py-1.5 text-xs font-medium text-foreground shadow-glass-inset backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-primary/35"
+              className="max-w-[6.5rem] rounded-lg border border-border bg-muted/60 px-2 py-1.5 text-ds-caption font-medium text-foreground shadow-glass-inset focus:outline-none focus:ring-2 focus:ring-primary/25 sm:max-w-[9rem]"
             >
               {ROLES.map((r) => (
                 <option key={r} value={r}>
@@ -132,27 +197,24 @@ export function DashboardLayout() {
                 </option>
               ))}
             </select>
-          </div>
 
-          <div className="flex shrink-0 items-center gap-1">
-            <Button variant="ghost" size="sm" asChild>
-              <Link to="/" className="text-muted-foreground">
+            <div
+              className="flex size-9 shrink-0 items-center justify-center rounded-full border border-primary/25 bg-primary/10 text-xs font-bold text-primary"
+              title={me?.email ?? role}
+            >
+              {displayInitial}
+            </div>
+
+            <Button variant="ghost" size="sm" asChild className="hidden sm:inline-flex">
+              <Link to="/" className="gap-1.5 text-muted-foreground">
+                <Home className="size-4" />
                 Home
               </Link>
-            </Button>
-            <Button
-              type="button"
-              variant="ghost"
-              size="icon"
-              onClick={() => void handleLogout()}
-              aria-label="Sign out"
-            >
-              <LogOut className="size-4" />
             </Button>
           </div>
         </header>
 
-        <main className="relative flex-1 overflow-auto bg-gradient-to-b from-transparent via-transparent to-background/40 p-4 md:p-6 lg:p-8">
+        <main className="relative flex-1 overflow-auto bg-gradient-to-b from-background via-background to-muted/20 p-4 md:p-6 lg:p-8">
           <DashboardOutletErrorBoundary>
             <Outlet />
           </DashboardOutletErrorBoundary>

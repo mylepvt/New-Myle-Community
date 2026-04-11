@@ -28,7 +28,7 @@ export function HomePage() {
       <header className="flex flex-1 flex-col justify-center gap-10">
         <div className="space-y-3 text-center">
           <p className="text-sm font-semibold text-primary">{t('appTitle')}</p>
-          <h1 className="bg-gradient-to-br from-foreground via-foreground to-primary/80 bg-clip-text text-3xl font-semibold tracking-tight text-transparent sm:text-4xl">
+          <h1 className="bg-gradient-to-br from-foreground via-foreground to-primary bg-clip-text font-heading text-3xl font-semibold tracking-tight text-transparent sm:text-4xl">
             Your sales workspace
           </h1>
           <p className="mx-auto max-w-md text-sm leading-relaxed text-muted-foreground">

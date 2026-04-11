@@ -1,16 +1,16 @@
 /**
- * Design system tokens — single source of truth for names (Tailwind maps via CSS variables).
- * Colors match hex spec; do not use arbitrary one-off hex in components — use semantic classes.
+ * Design system — Admin dashboard direction: charcoal canvas + orange accent.
+ * Tokens drive CSS variables in index.css; use semantic classes in UI.
  */
 export const designTokens = {
   color: {
-    canvas: '#0B0F14',
-    surface: '#121821',
-    card: '#1A2230',
+    canvas: '#0F111A',
+    surface: '#12151C',
+    card: '#161B22',
     textPrimary: '#E6EDF3',
     textSecondary: '#9AA4B2',
     textMuted: '#6B7280',
-    accent: '#4F46E5',
+    accent: '#FF8C00',
     success: '#22C55E',
     warning: '#F59E0B',
     danger: '#EF4444',
