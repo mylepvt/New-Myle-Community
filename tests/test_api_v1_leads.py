@@ -432,3 +432,38 @@ def test_patch_archive_then_restore(
         assert c.get("/api/v1/leads").json()["total"] == 1
     finally:
         asyncio.run(_clear_leads())
+
+
+def test_api_flow_create_then_workboard_then_status_then_archive(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """End-to-end API parity with manual UI: create → workboard → status → archive."""
+    try:
+        c = _authed_client(monkeypatch)
+        assert c.post("/api/v1/auth/dev-login", json={"role": "leader"}).status_code == 200
+        cr = c.post(
+            "/api/v1/leads",
+            json={"name": "Karanveer Singh Flow", "status": "new"},
+        )
+        assert cr.status_code == 201
+        lid = cr.json()["id"]
+
+        wb0 = c.get("/api/v1/workboard").json()
+        new_col = next(col for col in wb0["columns"] if col["status"] == "new")
+        assert new_col["total"] >= 1
+        assert any(i["name"] == "Karanveer Singh Flow" for i in new_col["items"])
+
+        assert (
+            c.patch(f"/api/v1/leads/{lid}", json={"status": "contacted"}).status_code == 200
+        )
+        wb1 = c.get("/api/v1/workboard").json()
+        contacted = next(col for col in wb1["columns"] if col["status"] == "contacted")
+        assert any(i["name"] == "Karanveer Singh Flow" for i in contacted["items"])
+
+        assert c.patch(f"/api/v1/leads/{lid}", json={"archived": True}).status_code == 200
+        assert c.get("/api/v1/leads").json()["total"] == 0
+        arch = c.get("/api/v1/leads", params={"archived_only": "true"}).json()
+        assert arch["total"] == 1
+        assert arch["items"][0]["name"] == "Karanveer Singh Flow"
+    finally:
+        asyncio.run(_clear_leads())
