@@ -35,5 +35,7 @@ jobs:
             echo "::error::Add repository secret MYLEPVT_SYNC_PAT (PAT with push access to ${MYLEPVT_TARGET})."
             exit 1
           fi
+          # Remove the GitHub Actions credential helper so our PAT is used instead
+          git config --unset-all http.https://github.com/.extraheader || true
           git remote add mylepvt "https://x-access-token:${PAT}@github.com/${MYLEPVT_TARGET}.git"
           git push mylepvt "HEAD:refs/heads/main"
