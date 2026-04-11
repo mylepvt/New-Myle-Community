@@ -55,6 +55,22 @@ async function fetchEnrollmentRequests(): Promise<TeamEnrollmentListResponse> {
   return res.json()
 }
 
+export type TeamMemberCreateBody = {
+  email: string
+  password: string
+  role: 'admin' | 'leader' | 'team'
+}
+
+export async function createTeamMember(body: TeamMemberCreateBody): Promise<TeamMemberPublic> {
+  const res = await apiFetch('/api/v1/team/members', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  })
+  if (!res.ok) await parseError(res)
+  return res.json()
+}
+
 export function useTeamMembersQuery(enabled = true) {
   return useQuery({
     queryKey: ['team', 'members'],

@@ -13,8 +13,8 @@ This document defines the **full plan** and **phase-by-phase execution order**. 
 | **2** | Production auth | **Mostly done** | Password + bcrypt, access/refresh JWT + `POST /auth/refresh`, rate limit on auth POSTs, JSON access logs; prod still: `AUTH_DEV_LOGIN_ENABLED=false`, OAuth/OTP optional |
 | **3** | Leads domain MVP | **Done** | `Lead` CRUD + scoped list + pagination; FE; `examples` removed |
 | **4** | Work & pipeline | **Done (MVP)** | Workboard, archived, follow-ups, retarget, lead-flow, Intelligence stub, **lead pool** + **recycle bin** (soft delete) |
-| **5** | Admin / team / finance (slices) | **Done (MVP)** | Team + System + Analytics stubs; **wallet ledger** + adjustments; Execution / Finance / Other / Settings **GET stubs**; nav routes wired |
-| **6** | Quality & deploy | **Mostly done** | **78+ pytest**; **Vitest** in CI; **OpenAPI** types; **`render.yaml`** + split-host **cookie SameSite** + hosted **DATABASE_URL** normalization; **apply Blueprint / secrets** = your account |
+| **5** | Admin / team / finance (slices) | **Done (MVP)** | Team list + **admin POST create user**; System + Analytics stubs; **wallet ledger** + adjustments; Execution / Finance / Other / Settings **GET stubs**; nav routes wired |
+| **6** | Quality & deploy | **Mostly done** | **~86 pytest**; **Vitest** in CI; **OpenAPI** types; **`render.yaml`** + split-host **cookie SameSite** + hosted **DATABASE_URL** normalization; **apply Blueprint / secrets** = your account |
 | **7** | PWA & polish | **Partial** | Manifest + **maskable purpose** on SVG icon; **SW** still blocked on Vite 8 + `vite-plugin-pwa`; i18n if product needs |
 
 **Rough overall picture (engineering foundation vs full product parity):** dashboard **nav parity + wallet MVP** is shipped; **Render Blueprint + prod cookie/DB env** are in-repo; deeper business rules, OAuth, PWA SW, and **clicking “Deploy” on a cloud account** remain on you.
@@ -183,4 +183,4 @@ This document defines the **full plan** and **phase-by-phase execution order**. 
 - **When a phase completes:** update the **Progress snapshot** table status column in this file.  
 - **Detailed ticks:** always in `MYLE_VL2_CHECKLIST.md`.  
 
-_Last aligned with checklist: 2026-04-10._
+_Last aligned with checklist: 2026-04-11._

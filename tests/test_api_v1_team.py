@@ -49,6 +49,54 @@ def test_team_members_forbidden_for_leader(monkeypatch: pytest.MonkeyPatch) -> N
     assert c.get("/api/v1/team/members").status_code == 403
 
 
+def test_create_team_member_admin(monkeypatch: pytest.MonkeyPatch) -> None:
+    c = _authed_client(monkeypatch)
+    assert c.post("/api/v1/auth/dev-login", json={"role": "admin"}).status_code == 200
+    res = c.post(
+        "/api/v1/team/members",
+        json={
+            "email": "new-member@myle.local",
+            "password": "password123",
+            "role": "team",
+        },
+    )
+    assert res.status_code == 201
+    body = res.json()
+    assert body["email"] == "new-member@myle.local"
+    assert body["role"] == "team"
+    assert "id" in body
+    listed = c.get("/api/v1/team/members")
+    emails = {x["email"] for x in listed.json()["items"]}
+    assert "new-member@myle.local" in emails
+
+
+def test_create_team_member_duplicate_email(monkeypatch: pytest.MonkeyPatch) -> None:
+    c = _authed_client(monkeypatch)
+    assert c.post("/api/v1/auth/dev-login", json={"role": "admin"}).status_code == 200
+    payload = {"email": "dev-leader@myle.local", "password": "password123", "role": "team"}
+    assert c.post("/api/v1/team/members", json=payload).status_code == 409
+
+
+def test_create_team_member_forbidden_leader(monkeypatch: pytest.MonkeyPatch) -> None:
+    c = _authed_client(monkeypatch)
+    assert c.post("/api/v1/auth/dev-login", json={"role": "leader"}).status_code == 200
+    res = c.post(
+        "/api/v1/team/members",
+        json={"email": "x@myle.local", "password": "password123", "role": "team"},
+    )
+    assert res.status_code == 403
+
+
+def test_create_team_member_short_password(monkeypatch: pytest.MonkeyPatch) -> None:
+    c = _authed_client(monkeypatch)
+    assert c.post("/api/v1/auth/dev-login", json={"role": "admin"}).status_code == 200
+    res = c.post(
+        "/api/v1/team/members",
+        json={"email": "short-pw@myle.local", "password": "short", "role": "team"},
+    )
+    assert res.status_code == 422
+
+
 def test_my_team_leader_returns_self(monkeypatch: pytest.MonkeyPatch) -> None:
     c = _authed_client(monkeypatch)
     assert c.post("/api/v1/auth/dev-login", json={"role": "leader"}).status_code == 200

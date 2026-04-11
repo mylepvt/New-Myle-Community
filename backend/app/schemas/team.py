@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Any
+from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -20,6 +20,15 @@ class TeamMemberListResponse(BaseModel):
     total: int
     limit: int
     offset: int
+
+
+class TeamMemberCreate(BaseModel):
+    """Admin-only: create a user with password login (bcrypt stored server-side)."""
+
+    # Str (not EmailStr) so ``@myle.local`` and internal domains work without email-validator.
+    email: str = Field(min_length=3, max_length=320)
+    password: str = Field(min_length=8, max_length=128)
+    role: Literal["admin", "leader", "team"]
 
 
 class TeamMyTeamResponse(BaseModel):

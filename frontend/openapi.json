@@ -539,6 +539,46 @@
             }
           }
         }
+      },
+      "post": {
+        "tags": [
+          "team"
+        ],
+        "summary": "Create Team Member",
+        "description": "Create a user (password login). Admin only \u2014 complements ``scripts/create_user.py`` for HTTP flows.",
+        "operationId": "create_team_member_api_v1_team_members_post",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TeamMemberCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TeamMemberPublic"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/api/v1/team/my-team": {
@@ -2218,6 +2258,39 @@
         ],
         "title": "TeamEnrollmentListResponse",
         "description": "Stub for future INR 196 enrollment workflow \u2014 always empty in V1."
+      },
+      "TeamMemberCreate": {
+        "properties": {
+          "email": {
+            "type": "string",
+            "maxLength": 320,
+            "minLength": 3,
+            "title": "Email"
+          },
+          "password": {
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 8,
+            "title": "Password"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "admin",
+              "leader",
+              "team"
+            ],
+            "title": "Role"
+          }
+        },
+        "type": "object",
+        "required": [
+          "email",
+          "password",
+          "role"
+        ],
+        "title": "TeamMemberCreate",
+        "description": "Admin-only: create a user with password login (bcrypt stored server-side)."
       },
       "TeamMemberListResponse": {
         "properties": {

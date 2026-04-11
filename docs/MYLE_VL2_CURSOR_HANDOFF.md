@@ -1,6 +1,6 @@
 # Claude → Cursor Handoff — Myle vl2
 
-**Last updated: 2026-04-11 (Session 2)**
+**Last updated: 2026-04-11 (Session 3)** — meta dev-login gate, `create_user.py`, `POST /team/members` + Team UI; docs synced
 
 ---
 
@@ -130,6 +130,8 @@ actual editing repo root mein hoti hai.
 |------|------|
 | CI workflow | `.github/workflows/ci.yml` |
 | Sync workflow | `.github/workflows/sync-to-mylepvt.yml` |
+| Create user (CLI) | `backend/scripts/create_user.py` |
+| Team admin create | `POST /api/v1/team/members` · `frontend/src/pages/TeamMembersPage.tsx` |
 | WS endpoint | `backend/app/api/v1/realtime_ws.py` |
 | WS hub/broadcast | `backend/app/core/realtime_hub.py` |
 | Frontend WS hook | `frontend/src/hooks/use-realtime-invalidation.ts` |
@@ -181,15 +183,17 @@ alembic upgrade head
 
 ---
 
-## 🛣️ Roadmap (baaki kaam)
+## 🛣️ Roadmap — repo mein shipped vs tumhare account par
 
-- [ ] `SECRET_KEY` production value set karo Render pe (not dev default)
-- [ ] `AUTH_DEV_LOGIN_ENABLED=false` confirm karo Render pe
-- [ ] Real users create karo (admin panel ya seeding script)
-- [ ] Alembic migrations run karo on live DB
-- [ ] WebSocket multi-instance future: in-memory `RealtimeHub` single-replica only →
-      Redis pub/sub needed if Render scaling > 1 instance
-- [ ] Hide dev-login UI when `AUTH_DEV_LOGIN_ENABLED=false`
+**Code / repo (done):**
+- [x] Dev-login UI sirf jab **`GET /api/v1/meta` → `auth_dev_login_enabled`** true ho; prod copy mein dev password hint nahi
+- [x] Real users: **`backend/scripts/create_user.py`** + **`POST /api/v1/team/members`** (admin) + **Team → All members → Add user**
+
+**Host / ops (tum Render dashboard / Shell par):**
+- [ ] **`SECRET_KEY`** (ya **`NEW_SECRET`**) — strong random; dev default mat chhodo
+- [ ] **`AUTH_DEV_LOGIN_ENABLED=false`** production par confirm
+- [ ] **`alembic upgrade head`** live DB (pehli deploy / migration ke baad)
+- [ ] WebSocket **>1 instance** scale karte ho to **Redis pub/sub** (abhi `RealtimeHub` in-memory = single replica)
 
 ---
 

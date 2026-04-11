@@ -201,7 +201,11 @@ export interface paths {
          */
         get: operations["list_team_members_api_v1_team_members_get"];
         put?: never;
-        post?: never;
+        /**
+         * Create Team Member
+         * @description Create a user (password login). Admin only — complements ``scripts/create_user.py`` for HTTP flows.
+         */
+        post: operations["create_team_member_api_v1_team_members_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1082,6 +1086,21 @@ export interface components {
             /** Offset */
             offset: number;
         };
+        /**
+         * TeamMemberCreate
+         * @description Admin-only: create a user with password login (bcrypt stored server-side).
+         */
+        TeamMemberCreate: {
+            /** Email */
+            email: string;
+            /** Password */
+            password: string;
+            /**
+             * Role
+             * @enum {string}
+             */
+            role: "admin" | "leader" | "team";
+        };
         /** TeamMemberListResponse */
         TeamMemberListResponse: {
             /** Items */
@@ -1571,6 +1590,39 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["TeamMemberListResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_team_member_api_v1_team_members_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TeamMemberCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TeamMemberPublic"];
                 };
             };
             /** @description Validation Error */

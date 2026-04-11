@@ -22,7 +22,7 @@ Tick items in Git/PRs as you ship.
 ## Architecture (smart stack — legacy gaps)
 
 - [x] Documented principles: server-first, API-driven shell, single sources — **`MYLE_VL2_ROADMAP.md`** → *Architecture & smart UX*
-- [x] **`GET /api/v1/meta`** — `environment` + `features.intelligence` (env: **`FEATURE_INTELLIGENCE`**); dashboard nav uses flags; **no webhooks** on this route; **no Maya / bundled third-party AI** — product-only Intelligence nav stub
+- [x] **`GET /api/v1/meta`** — `environment` + `auth_dev_login_enabled` + `features.intelligence` (env: **`FEATURE_INTELLIGENCE`**); dashboard nav uses flags; login hides dev quick-login when **`auth_dev_login_enabled`** is false; **no webhooks** on this route; **no Maya / bundled third-party AI** — product-only Intelligence nav stub
 
 ## Backend — core
 
@@ -55,6 +55,7 @@ Tick items in Git/PRs as you ship.
 - [x] `SECRET_KEY`, `SESSION_COOKIE_SECURE` in settings
 - [x] Rate limit: sliding window on `POST` **`/api/v1/auth/login`**, **`/api/v1/auth/dev-login`**, **`/api/v1/auth/refresh`** (`AUTH_LOGIN_RATE_LIMIT_PER_MINUTE`, `0` = off)
 - [x] Production reference: **`AUTH_DEV_LOGIN_ENABLED=false`** in **`config/.env.production.example`** (set on real hosts per **Deploy** section)
+- [x] Prod user bootstrap — **`backend/scripts/create_user.py`** (bcrypt; same hashing as **`POST /api/v1/auth/login`**)
 
 ## Backend — API domains (nav parity, incremental)
 
@@ -72,7 +73,7 @@ Stub = contract only; **Done** = backed by DB + rules.
 - [x] **Execution (nav parity stubs):** **`GET /api/v1/execution/at-risk-leads`**, **`GET /api/v1/execution/lead-ledger`** (admin, **`SystemStubResponse`**) — weak members / leak map / stabilization watch remain **out of product v1**
 - [x] **Lead pool** + **recycle bin** — `leads.in_pool`, `leads.deleted_at` (soft delete); `GET /api/v1/lead-pool`; `POST /api/v1/leads/{id}/claim`; `GET /api/v1/leads?deleted_only=true` (admin); `PATCH` **`in_pool`** / **`restored`** (admin); main list + workboard + retarget exclude pool & deleted; Work → **Lead pool** (leader/team), **Admin lead pool** (same API), **Recycle bin**
 - [x] Work → **Intelligence** — placeholder page + **hard redirect** if `GET /api/v1/meta` → `features.intelligence` is false (env `FEATURE_INTELLIGENCE`); product-only, no third-party AI
-- [x] **Team:** **`GET /api/v1/team/members`**, **`my-team`**, **`enrollment-requests`**, **`reports`**, **`approvals`** — members + enrollment real/empty as before; reports/approvals stubs; all Team nav items wired in FE
+- [x] **Team:** **`GET /api/v1/team/members`**, **`POST /api/v1/team/members`** (admin — create user, bcrypt); **`my-team`**, **`enrollment-requests`**, **`reports`**, **`approvals`** — list + enrollment real/empty as before; reports/approvals stubs; **Team → All members** includes admin **Add user** form; all Team nav items wired in FE
 - [x] **System (V1 stubs):** **`GET /api/v1/system/training`**, **`/system/decision-engine`** (admin); **`/system/coaching`** (admin + leader); JSON **`items`/`total`/`note`** — empty until product models data; System → **Training**, **Decision engine**, **Coaching** wired
 - [x] **Analytics (V1 stubs):** **`GET /api/v1/analytics/activity-log`**, **`GET /api/v1/analytics/day-2-report`** (admin); reuse **`SystemStubResponse`** shape; Analytics → **Activity log**, **Day 2 test report** wired
 - [x] **Finance:** **Smart wallet** — **`GET /api/v1/wallet/me`**, **`GET /api/v1/wallet/ledger`**, **`POST /api/v1/wallet/adjustments`** (admin, idempotent key, signed cents); **Recharges** FE posts adjustments; **budget export**, **monthly targets**, **lead pool purchase** (FE nav) = **`GET /api/v1/finance/*`** stubs
@@ -117,7 +118,7 @@ Stub = contract only; **Done** = backed by DB + rules.
 ## Quality
 
 - [x] Pytest: `/auth/me`, dev-login/logout, password login, `/auth/refresh`, rate limit, `/leads` (SQLite in-memory + `get_db` override in `tests/conftest.py`)
-- [x] Pytest: wallet + shell stub routers + broader domain coverage (**~78+** tests in CI)
+- [x] Pytest: wallet + shell stub routers + broader domain coverage (**~86+** tests in CI)
 - [x] Frontend tests — **Vitest + Testing Library** (`npm run test`); **LoginPage** + **`ProtectedRoute`** (CI)
 - [x] **OpenAPI → TS types** — `scripts/export_openapi.py` writes `frontend/openapi.json`; **`npm run generate-api-types`** (in `frontend/`) refreshes `src/lib/api-v1.d.ts` via `npx openapi-typescript@7.13.0` (run after API contract changes; commit both JSON + `.d.ts`)
 
