@@ -11,3 +11,13 @@
 
 - `reliability.py` — Request correlation id, incident codes, structured `[reliability]` log lines, `safe_user_error`.  
   **vl2:** `app/core/reliability.py`; request ids via `RequestIdMiddleware` + `ensure_request_id`. Unhandled exceptions log/return `incident_id` (`API-500-…`) in `app/core/errors.py`.
+
+### `services/` (full tree snapshot + vl2 ports)
+
+| Monolith file | Verbatim snapshot | Runnable in vl2 |
+|---------------|-------------------|-----------------|
+| `rule_engine.py` | `legacy/.../services/rule_engine.py` | `app/services/rule_engine.py` → `app.core.pipeline_rules` |
+| `wallet_ledger.py` | ✓ | `app/services/wallet_ledger.py` (SQLite + legacy lead columns) |
+| `scoring_service.py` | ✓ | `app/services/scoring_service.py` (optional `database.get_db` / `helpers._upsert_daily_score`) |
+| `hierarchy_lead_sync.py` | ✓ | `app/services/hierarchy_lead_sync.py` (`apply_leads_update` subset in-module) |
+| `day2_certificate_pdf.py` | ✓ | `app/services/day2_certificate_pdf.py` (needs `reportlab` in `requirements.txt`) |
