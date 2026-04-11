@@ -74,10 +74,11 @@ export async function deleteFollowUp(id: number): Promise<void> {
   if (!res.ok) await parseError(res)
 }
 
-export function useFollowUpsQuery(openOnly: boolean) {
+export function useFollowUpsQuery(openOnly: boolean, enabled = true) {
   return useQuery({
     queryKey: ['follow-ups', 'list', openOnly],
     queryFn: () => fetchFollowUps(openOnly),
+    enabled,
   })
 }
 

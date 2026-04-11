@@ -1,7 +1,33 @@
-import { TrendingUp } from 'lucide-react'
+import { useMemo } from 'react'
+import { Link } from 'react-router-dom'
+import {
+  ArrowRight,
+  Kanban,
+  ListTodo,
+  Sparkles,
+  TrendingUp,
+  Users,
+} from 'lucide-react'
 
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Skeleton } from '@/components/ui/skeleton'
+import { ErrorState, LoadingState } from '@/components/ui/states'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
 import { useAuthMeQuery } from '@/hooks/use-auth-me-query'
+import { useFollowUpsQuery } from '@/hooks/use-follow-ups-query'
+import { useLeadPoolQuery } from '@/hooks/use-lead-pool-query'
+import { LEAD_STATUS_OPTIONS, type LeadPublic } from '@/hooks/use-leads-query'
+import { useMetaQuery } from '@/hooks/use-meta-query'
+import { useWorkboardQuery } from '@/hooks/use-workboard-query'
 import { t } from '@/lib/i18n'
 import { useRoleStore } from '@/stores/role-store'
 import type { Role } from '@/types/role'
@@ -12,31 +38,117 @@ const titles: Record<Role, string> = {
   team: 'Your workspace',
 }
 
-const kpis = [
-  { label: 'Total leads', value: '400+', hint: 'In pipeline', tone: 'text-success' },
-  { label: 'Reachable', value: '250', hint: 'Contactable', tone: 'text-foreground' },
-  { label: 'Follow-ups due', value: '24', hint: 'This week', tone: 'text-foreground' },
-  { label: 'Win rate', value: '32%', hint: 'Last 30d', tone: 'text-primary' },
-] as const
+function statusLabel(status: string): string {
+  return LEAD_STATUS_OPTIONS.find((o) => o.value === status)?.label ?? status
+}
+
+function recentFromWorkboard(columns: { items: LeadPublic[] }[] | undefined): LeadPublic[] {
+  if (!columns?.length) return []
+  const seen = new Set<number>()
+  const out: LeadPublic[] = []
+  for (const col of columns) {
+    for (const item of col.items) {
+      if (!seen.has(item.id)) {
+        seen.add(item.id)
+        out.push(item)
+      }
+    }
+  }
+  return out
+    .sort(
+      (a, b) =>
+        new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
+    )
+    .slice(0, 8)
+}
 
 export function DashboardHomePage() {
   const role = useRoleStore((s) => s.role)
-  const { data: me } = useAuthMeQuery()
+  const { data: me, isPending: mePending } = useAuthMeQuery()
+  const { data: meta } = useMetaQuery()
+  const sessionReady = Boolean(me?.authenticated)
+
+  const wb = useWorkboardQuery(sessionReady)
+  const fu = useFollowUpsQuery(true, sessionReady)
+  const pool = useLeadPoolQuery(sessionReady)
+
   const firstName =
     me?.email?.split('@')[0]?.split(/[._-]/)[0] ?? 'there'
+
+  const metrics = useMemo(() => {
+    const columns = wb.data?.columns
+    if (!columns) {
+      return {
+        pipelineTotal: 0,
+        won: 0,
+        lost: 0,
+        newLeads: 0,
+        winRatePct: null as number | null,
+        chartMax: 1,
+        bars: [] as { status: string; total: number; label: string }[],
+      }
+    }
+    let pipelineTotal = 0
+    let won = 0
+    let lost = 0
+    let newLeads = 0
+    const bars: { status: string; total: number; label: string }[] = []
+    for (const c of columns) {
+      pipelineTotal += c.total
+      if (c.status === 'won') won = c.total
+      if (c.status === 'lost') lost = c.total
+      if (c.status === 'new') newLeads = c.total
+      bars.push({
+        status: c.status,
+        total: c.total,
+        label: statusLabel(c.status),
+      })
+    }
+    const closed = won + lost
+    const winRatePct = closed > 0 ? Math.round((won / closed) * 100) : null
+    const chartMax = Math.max(...bars.map((b) => b.total), 1)
+    return {
+      pipelineTotal,
+      won,
+      lost,
+      newLeads,
+      winRatePct,
+      chartMax,
+      bars,
+    }
+  }, [wb.data?.columns])
+
+  const recentLeads = useMemo(
+    () => recentFromWorkboard(wb.data?.columns),
+    [wb.data?.columns],
+  )
+
+  const openFollowUps = fu.data?.total ?? 0
+  const poolTotal = pool.data?.total ?? 0
+
+  const kpiLoading = sessionReady && (wb.isPending || fu.isPending)
+
+  const showFollowUpsLink = role === 'admin' || role === 'leader'
+  const showPoolLink = role === 'leader' || role === 'team' || role === 'admin'
+  const showIntel =
+    (meta?.features.intelligence ?? true) &&
+    (role === 'admin' || role === 'team')
 
   return (
     <div className="mx-auto max-w-6xl space-y-6">
       <Card className="overflow-hidden border-primary/25 bg-gradient-to-br from-card via-card to-primary/[0.06]">
         <CardHeader className="flex flex-row items-start justify-between gap-4 pb-2">
           <div>
-            <CardDescription>Today</CardDescription>
+            <CardDescription>Today · {meta?.environment ?? '…'}</CardDescription>
             <CardTitle className="mt-1 font-heading text-ds-h1 capitalize tracking-tight">
               Welcome, {firstName}!
             </CardTitle>
             <p className="mt-2 max-w-xl text-ds-body text-muted-foreground">
               {titles[role]} — {t('appTagline')}
             </p>
+            {me?.email ? (
+              <p className="mt-1 text-ds-caption text-subtle">{me.email}</p>
+            ) : null}
           </div>
           <div className="hidden shrink-0 rounded-2xl border border-primary/20 bg-primary/10 p-3 text-primary sm:block">
             <TrendingUp className="size-10" strokeWidth={1.25} aria-hidden />
@@ -44,59 +156,276 @@ export function DashboardHomePage() {
         </CardHeader>
       </Card>
 
+      {wb.isError ? (
+        <ErrorState
+          message={
+            wb.error instanceof Error
+              ? wb.error.message
+              : 'Could not load pipeline data.'
+          }
+          onRetry={() => void wb.refetch()}
+        />
+      ) : null}
+
       <div>
-        <h2 className="mb-3 font-heading text-ds-h2 text-foreground">Overview</h2>
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-          {kpis.map((k) => (
-            <Card key={k.label} className="border-primary/20">
+        <h2 className="mb-3 font-heading text-ds-h2 text-foreground">
+          Overview
+        </h2>
+        {kpiLoading ? (
+          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <Card key={i} className="border-primary/20">
+                <CardContent className="pt-6">
+                  <Skeleton className="mb-2 h-3 w-24" />
+                  <Skeleton className="h-8 w-16" />
+                  <Skeleton className="mt-2 h-3 w-20" />
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        ) : (
+          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+            <Card className="border-primary/20">
               <CardContent className="pt-6">
                 <p className="text-ds-caption font-medium uppercase tracking-wide text-muted-foreground">
-                  {k.label}
+                  Active pipeline
                 </p>
-                <p className={`mt-2 font-heading text-3xl font-semibold tabular-nums ${k.tone}`}>
-                  {k.value}
+                <p className="mt-2 font-heading text-3xl font-semibold tabular-nums text-foreground">
+                  {metrics.pipelineTotal}
                 </p>
-                <p className="mt-1 text-ds-caption text-subtle">{k.hint}</p>
+                <p className="mt-1 text-ds-caption text-subtle">
+                  Leads in your scope (excl. pool / archive)
+                </p>
               </CardContent>
             </Card>
-          ))}
-        </div>
+            <Card className="border-primary/20">
+              <CardContent className="pt-6">
+                <p className="text-ds-caption font-medium uppercase tracking-wide text-muted-foreground">
+                  Open follow-ups
+                </p>
+                <p className="mt-2 font-heading text-3xl font-semibold tabular-nums text-primary">
+                  {openFollowUps}
+                </p>
+                <p className="mt-1 text-ds-caption text-subtle">
+                  Not completed
+                </p>
+              </CardContent>
+            </Card>
+            <Card className="border-primary/20">
+              <CardContent className="pt-6">
+                <p className="text-ds-caption font-medium uppercase tracking-wide text-muted-foreground">
+                  Won
+                </p>
+                <p className="mt-2 font-heading text-3xl font-semibold tabular-nums text-success">
+                  {metrics.won}
+                </p>
+                <p className="mt-1 text-ds-caption text-subtle">
+                  {metrics.winRatePct !== null
+                    ? `Win rate ${metrics.winRatePct}% (won / won+lost)`
+                    : 'No closed outcomes yet'}
+                </p>
+              </CardContent>
+            </Card>
+            <Card className="border-primary/20">
+              <CardContent className="pt-6">
+                <p className="text-ds-caption font-medium uppercase tracking-wide text-muted-foreground">
+                  New leads
+                </p>
+                <p className="mt-2 font-heading text-3xl font-semibold tabular-nums text-foreground">
+                  {metrics.newLeads}
+                </p>
+                <p className="mt-1 text-ds-caption text-subtle">
+                  In &quot;new&quot; stage
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+        )}
       </div>
 
       <div className="grid gap-6 lg:grid-cols-5">
         <Card className="border-primary/20 lg:col-span-3">
           <CardHeader>
-            <CardTitle className="text-ds-h3">Activity</CardTitle>
-            <CardDescription>Last 7 days (sample)</CardDescription>
+            <CardTitle className="text-ds-h3">Pipeline by stage</CardTitle>
+            <CardDescription>
+              Counts from workboard (same rules as your lead visibility)
+            </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="flex h-40 items-end justify-between gap-2 border-b border-border/60 px-1 pb-0">
-              {[40, 65, 45, 80, 55, 90, 70].map((h, i) => (
-                <div
-                  key={i}
-                  className="w-full max-w-[2.5rem] rounded-t-md bg-gradient-to-t from-primary/80 to-primary/40"
-                  style={{ height: `${h}%` }}
-                />
-              ))}
-            </div>
-            <div className="mt-2 flex justify-between text-ds-caption text-subtle">
-              <span>Mon</span>
-              <span>Sun</span>
-            </div>
+            {wb.isPending && sessionReady ? (
+              <LoadingState label="Loading pipeline…" />
+            ) : (
+              <>
+                <div className="flex h-44 items-end justify-between gap-1.5 border-b border-border/60 px-0.5 pb-0 sm:gap-2">
+                  {metrics.bars.map((b) => {
+                    const h = Math.round((b.total / metrics.chartMax) * 100)
+                    return (
+                      <div
+                        key={b.status}
+                        className="flex min-w-0 flex-1 flex-col items-center gap-2"
+                      >
+                        <span className="text-center text-ds-caption font-medium tabular-nums text-foreground">
+                          {b.total}
+                        </span>
+                        <div
+                          className="w-full max-w-[3rem] rounded-t-md bg-gradient-to-t from-primary/85 to-primary/35"
+                          style={{ height: `${Math.max(h, 4)}%` }}
+                          title={`${b.label}: ${b.total}`}
+                        />
+                        <span className="line-clamp-2 text-center text-[0.65rem] leading-tight text-subtle">
+                          {b.label}
+                        </span>
+                      </div>
+                    )
+                  })}
+                </div>
+                {metrics.bars.length === 0 ? (
+                  <p className="mt-4 text-center text-ds-body text-muted-foreground">
+                    No pipeline data yet — add leads from Work or Leads.
+                  </p>
+                ) : null}
+              </>
+            )}
           </CardContent>
         </Card>
 
         <Card className="border-primary/20 lg:col-span-2">
           <CardHeader>
             <CardTitle className="text-ds-h3">Quick actions</CardTitle>
-            <CardDescription>Shortcuts for your role</CardDescription>
+            <CardDescription>Jump to common screens</CardDescription>
           </CardHeader>
-          <CardContent className="space-y-2 text-ds-body text-muted-foreground">
-            <p>Open leads from the sidebar to manage your pipeline.</p>
-            <p>Use the search bar to find records faster (UI preview).</p>
+          <CardContent className="flex flex-col gap-2">
+            <Button variant="outline" className="justify-between" asChild>
+              <Link to="/dashboard/work/leads">
+                <span className="flex items-center gap-2">
+                  <Users className="size-4" />
+                  {role === 'admin' ? 'All leads' : 'My leads'}
+                </span>
+                <ArrowRight className="size-4 opacity-60" />
+              </Link>
+            </Button>
+            <Button variant="outline" className="justify-between" asChild>
+              <Link to="/dashboard/work/workboard">
+                <span className="flex items-center gap-2">
+                  <Kanban className="size-4" />
+                  Workboard
+                </span>
+                <ArrowRight className="size-4 opacity-60" />
+              </Link>
+            </Button>
+            {showFollowUpsLink ? (
+              <Button variant="outline" className="justify-between" asChild>
+                <Link to="/dashboard/work/follow-ups">
+                  <span className="flex items-center gap-2">
+                    <ListTodo className="size-4" />
+                    Follow-ups
+                  </span>
+                  <ArrowRight className="size-4 opacity-60" />
+                </Link>
+              </Button>
+            ) : null}
+            {showPoolLink ? (
+              <Button variant="outline" className="justify-between" asChild>
+                <Link to="/dashboard/work/lead-pool">
+                  <span className="flex items-center gap-2">
+                    Lead pool
+                    {poolTotal > 0 ? (
+                      <Badge variant="primary" className="ml-1">
+                        {poolTotal}
+                      </Badge>
+                    ) : null}
+                  </span>
+                  <ArrowRight className="size-4 opacity-60" />
+                </Link>
+              </Button>
+            ) : null}
+            {showIntel ? (
+              <Button variant="outline" className="justify-between" asChild>
+                <Link to="/dashboard/intelligence">
+                  <span className="flex items-center gap-2">
+                    <Sparkles className="size-4" />
+                    Intelligence
+                  </span>
+                  <ArrowRight className="size-4 opacity-60" />
+                </Link>
+              </Button>
+            ) : null}
           </CardContent>
         </Card>
       </div>
+
+      <Card className="border-primary/20">
+        <CardHeader className="flex flex-row flex-wrap items-center justify-between gap-2">
+          <div>
+            <CardTitle className="text-ds-h3">Recent leads</CardTitle>
+            <CardDescription>
+              Newest leads loaded in the workboard snapshot (up to 8)
+            </CardDescription>
+          </div>
+          <Button variant="secondary" size="sm" asChild>
+            <Link to="/dashboard/work/leads">View all</Link>
+          </Button>
+        </CardHeader>
+        <CardContent>
+          {wb.isPending && sessionReady ? (
+            <div className="space-y-2">
+              <Skeleton className="h-10 w-full" />
+              <Skeleton className="h-10 w-full" />
+              <Skeleton className="h-10 w-full" />
+            </div>
+          ) : recentLeads.length === 0 ? (
+            <p className="text-ds-body text-muted-foreground">
+              No leads in the current workboard window yet. Open{' '}
+              <Link
+                to="/dashboard/work/leads"
+                className="font-medium text-primary underline-offset-2 hover:underline"
+              >
+                Leads
+              </Link>{' '}
+              to create or import.
+            </p>
+          ) : (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Name</TableHead>
+                  <TableHead>Stage</TableHead>
+                  <TableHead className="text-right">Created</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {recentLeads.map((lead) => (
+                  <TableRow key={lead.id}>
+                    <TableCell className="font-medium">{lead.name}</TableCell>
+                    <TableCell>
+                      <Badge variant="outline">{statusLabel(lead.status)}</Badge>
+                    </TableCell>
+                    <TableCell className="text-right text-ds-caption text-muted-foreground">
+                      {new Date(lead.created_at).toLocaleDateString(undefined, {
+                        month: 'short',
+                        day: 'numeric',
+                        year: 'numeric',
+                      })}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          )}
+        </CardContent>
+      </Card>
+
+      <p className="text-center text-ds-caption text-subtle">
+        {meta
+          ? `${meta.name} · API v${meta.api_version}`
+          : 'Loading server meta…'}
+      </p>
+
+      {mePending && !me ? (
+        <div className="flex justify-center py-8">
+          <LoadingState label="Loading session…" />
+        </div>
+      ) : null}
     </div>
   )
 }
