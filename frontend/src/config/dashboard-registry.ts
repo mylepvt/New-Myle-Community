@@ -1,9 +1,10 @@
 /**
  * Single source of truth for dashboard IA: nav labels + how each path renders.
- * **Route ↔ role mapping** lives only in repo `config/dashboard-route-roles.json` — imported here as `routeRoles(path)`.
+ * **Route ↔ role mapping** lives only in `dashboard-route-roles.json` (this folder) — imported as `routeRoles(path)`.
+ * Kept under `frontend/src/config/` so Docker/CI builds that only copy `frontend/` still resolve the file.
  * `dashboard-nav.ts` and routing consume this — do not duplicate path lists elsewhere.
  */
-import routeRolesData from '../../../config/dashboard-route-roles.json'
+import routeRolesData from './dashboard-route-roles.json'
 import { isRole, type Role } from '@/types/role'
 
 const ROUTE_ROLES = validateRouteRolesMap(routeRolesData as Record<string, string[]>)
@@ -15,7 +16,7 @@ function validateRouteRolesMap(raw: Record<string, string[]>): Record<string, Ro
     for (const x of roles) {
       if (!isRole(x)) {
         throw new Error(
-          `config/dashboard-route-roles.json: invalid role "${x}" for path "${path}"`,
+          `dashboard-route-roles.json: invalid role "${x}" for path "${path}"`,
         )
       }
       rr.push(x)
@@ -25,11 +26,11 @@ function validateRouteRolesMap(raw: Record<string, string[]>): Record<string, Ro
   return out
 }
 
-/** Which roles may open this dashboard path — from `config/dashboard-route-roles.json` only. */
+/** Which roles may open this dashboard path — from `./dashboard-route-roles.json` only. */
 function routeRoles(path: string): Role[] {
   const r = ROUTE_ROLES[path]
   if (!r) {
-    throw new Error(`config/dashboard-route-roles.json: missing entry for path "${path}"`)
+    throw new Error(`dashboard-route-roles.json: missing entry for path "${path}"`)
   }
   return r
 }
@@ -425,14 +426,14 @@ function assertRouteRolesJsonMatchesDefs(
   for (const k of Object.keys(map)) {
     if (!paths.has(k)) {
       throw new Error(
-        `config/dashboard-route-roles.json: orphaned key "${k}" — not present in DASHBOARD_ROUTE_DEFS`,
+        `dashboard-route-roles.json: orphaned key "${k}" — not present in DASHBOARD_ROUTE_DEFS`,
       )
     }
   }
   for (const p of paths) {
     if (!Object.prototype.hasOwnProperty.call(map, p)) {
       throw new Error(
-        `config/dashboard-route-roles.json: missing key for path "${p}" (every registry path needs a roles entry)`,
+        `dashboard-route-roles.json: missing key for path "${p}" (every registry path needs a roles entry)`,
       )
     }
   }

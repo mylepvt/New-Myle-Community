@@ -10,7 +10,7 @@ alwaysApply: false
 - All `/dashboard/*` paths, sidebar labels, stub API paths, and what renders (`full` vs `stub`) live in **`frontend/src/config/dashboard-registry.ts`** only. **`dashboard-nav.ts`** re-exports nav helpers for imports.
 - Adding a screen = add **one** entry to **`DASHBOARD_ROUTE_DEFS`** (path + section + roles + `surface` + payload). Paths flow into `dashboardChildPathSet` and stub maps automatically — do not maintain parallel lists in **`shell-stub-routes.ts`** (re-export only) or a separate route `if` chain.
 - **Roles (admin / leader / team):** ids, human-readable labels, short labels, and dev seed emails live in **`frontend/src/types/role.ts`** (`ROLE_CATALOG`). Backend mirror: **`backend/app/constants/roles.py`**. Do not duplicate role strings or `dev-*@myle.local` emails elsewhere.
-- **Route ↔ role (who may open which `/dashboard/...` path):** edit **`config/dashboard-route-roles.json` only** — the registry imports it (`routeRoles(path)`). CI/tests validate JSON against known roles; do not re-list role arrays inside **`dashboard-registry.ts`**.
+- **Route ↔ role (who may open which `/dashboard/...` path):** edit **`frontend/src/config/dashboard-route-roles.json` only** — the registry imports it (`routeRoles(path)`). CI/tests validate JSON against known roles; do not re-list role arrays inside **`dashboard-registry.ts`**. (File lives next to the registry so Docker builds with `frontend/` context still resolve it.)
 
 ## Routing
 - Under `/dashboard`, use **only** the existing pattern in `App.tsx`: `index` + **one** splat route → `DashboardNestedPage`.
