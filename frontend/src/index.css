@@ -78,16 +78,25 @@
   html {
     @apply scroll-smooth;
     color-scheme: dark;
+    /* Stop horizontal rubber-band / sideways “slide” on iOS/Android */
+    max-width: 100%;
+    overflow-x: clip;
+    overscroll-behavior-x: none;
   }
 
   body {
     @apply min-h-dvh bg-background font-sans text-ds-body text-foreground antialiased;
     font-feature-settings: 'kern' 1;
     -webkit-tap-highlight-color: hsl(var(--primary) / 0.15);
+    max-width: 100%;
+    overflow-x: clip;
+    /* App-like feel: no double-tap zoom; still allows pinch-zoom for a11y users who need it */
+    touch-action: manipulation;
   }
 
   #root {
-    @apply min-h-dvh;
+    @apply min-h-dvh min-w-0 max-w-full;
+    overflow-x: clip;
   }
 
   h1 {

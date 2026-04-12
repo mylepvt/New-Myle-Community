@@ -95,7 +95,7 @@ export function DashboardLayout() {
   }
 
   return (
-    <div className="flex min-h-dvh bg-background">
+    <div className="flex min-h-dvh w-full min-w-0 max-w-full overflow-x-hidden bg-background">
       {sidebarOpen ? (
         <button
           type="button"
@@ -220,7 +220,7 @@ export function DashboardLayout() {
         </div>
       </aside>
 
-      <div className="flex min-w-0 flex-1 flex-col pt-[env(safe-area-inset-top)]">
+      <div className="flex min-w-0 max-w-full flex-1 flex-col overflow-x-hidden pt-[env(safe-area-inset-top)]">
         <header className="flex h-[52px] shrink-0 items-center gap-2 border-b border-border bg-background/90 px-2 shadow-ios-bar backdrop-blur-xl supports-[backdrop-filter]:bg-background/75 md:px-3">
           <Button
             type="button"
@@ -302,7 +302,7 @@ export function DashboardLayout() {
 
         <main
           className={cn(
-            'relative flex-1 overflow-auto bg-background p-4 md:p-6 lg:p-8',
+            'relative min-w-0 flex-1 overflow-y-auto overflow-x-hidden bg-background p-4 md:p-6 lg:p-8',
             'pb-[calc(4.5rem+env(safe-area-inset-bottom,0px))] md:pb-6 lg:pb-8',
           )}
         >
