@@ -16,14 +16,35 @@ branch_labels = None
 depends_on = None
 
 
-def upgrade():
-    # Create payment status enum
-    payment_status = postgresql.ENUM(
-        'initiated', 'success', 'failed', 'verified', 'refunded', 'disputed',
-        name='payment_status'
+def _ensure_payment_status_enum() -> None:
+    """Idempotent: Render/Postgres may already have this type from a partial or retried migration."""
+    op.execute(
+        """
+        DO $$ BEGIN
+            CREATE TYPE payment_status AS ENUM (
+                'initiated', 'success', 'failed', 'verified', 'refunded', 'disputed'
+            );
+        EXCEPTION
+            WHEN duplicate_object THEN NULL;
+        END $$;
+        """
     )
-    payment_status.create(op.get_bind())
-    
+
+
+def upgrade():
+    _ensure_payment_status_enum()
+
+    payment_status_type = postgresql.ENUM(
+        "initiated",
+        "success",
+        "failed",
+        "verified",
+        "refunded",
+        "disputed",
+        name="payment_status",
+        create_type=False,
+    )
+
     # Payment table - immutable source of truth
     op.create_table(
         'payments',
@@ -34,7 +55,7 @@ def upgrade():
         sa.Column('razorpay_payment_id', sa.String(255), nullable=True),
         sa.Column('amount', sa.Numeric(10, 2), nullable=False),
         sa.Column('currency', sa.String(3), nullable=False, server_default='INR'),
-        sa.Column('status', sa.Enum('initiated', 'success', 'failed', 'verified', 'refunded', 'disputed', name='payment_status'), nullable=False),
+        sa.Column('status', payment_status_type, nullable=False),
         sa.Column('gateway_response', postgresql.JSONB(), nullable=True),
         sa.Column('webhook_payload', postgresql.JSONB(), nullable=True),
         sa.Column('verified_at', sa.DateTime(timezone=True), nullable=True),
