@@ -1,5 +1,5 @@
-import { type FormEvent, useEffect, useState } from 'react'
-import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom'
+import { type FormEvent, useEffect, useMemo, useState } from 'react'
+import { Link, Navigate, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { Bell, Home, LogOut, Menu, PanelLeftClose, Search } from 'lucide-react'
 
 import { DashboardMobileTabBar } from '@/components/layout/DashboardMobileTabBar'
@@ -21,6 +21,7 @@ import { roleShortLabel } from '@/types/role'
 export function DashboardLayout() {
   useSyncRoleFromMe()
   useRealtimeInvalidation(true)
+  const location = useLocation()
   const { data: meta } = useMetaQuery()
   const { data: me } = useAuthMeQuery()
   const { role: shellRole, isPending: rolePending } = useDashboardShellRole()
@@ -49,8 +50,29 @@ export function DashboardLayout() {
   const navFlags = {
     intelligence: meta?.features.intelligence ?? true,
   }
-  const sections =
-    shellRole != null ? filterDashboardNav(shellRole, navFlags) : []
+
+  const trainingStatusLc = (me?.training_status ?? '').toLowerCase()
+  const trainingLocked =
+    me?.training_required === true && trainingStatusLc !== 'completed'
+  const onTrainingRoute =
+    location.pathname === '/dashboard/system/training' ||
+    location.pathname.startsWith('/dashboard/system/training/')
+
+  const sections = useMemo(() => {
+    if (shellRole == null) return []
+    const full = filterDashboardNav(shellRole, navFlags)
+    if (!trainingLocked) return full
+    const flat = full.flatMap((s) => s.items)
+    const tr = flat.find((i) => i.path === 'system/training')
+    if (tr) {
+      return [{ id: 'training-only', label: '', items: [tr] }]
+    }
+    return full
+  }, [shellRole, trainingLocked, navFlags.intelligence])
+
+  if (trainingLocked && !onTrainingRoute) {
+    return <Navigate to="/dashboard/system/training" replace />
+  }
   const envLabel = meta?.environment
 
   const displayInitial =
@@ -210,7 +232,10 @@ export function DashboardLayout() {
           </Button>
 
           <form
-            className="relative mx-auto hidden max-w-xl flex-1 sm:block"
+            className={cn(
+              'relative mx-auto hidden max-w-xl flex-1 sm:block',
+              trainingLocked && 'sm:hidden',
+            )}
             onSubmit={submitHeaderSearch}
             role="search"
           >
@@ -288,6 +313,7 @@ export function DashboardLayout() {
           <DashboardMobileTabBar
             role={shellRole}
             flags={navFlags}
+            trainingLocked={trainingLocked}
             onOpenMenu={() => setSidebarOpen(true)}
           />
         ) : null}

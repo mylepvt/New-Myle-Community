@@ -6,6 +6,6 @@
 
 **Silent drift allowed nahi:** labels, rules, ya stub “done” mat rakho jab tak parity row update na ho.
 
-**Technical pointers:** `docs/LEGACY_PARITY_MAPPING.md`, `docs/LOSSLESS_FULLSTACK_PORT.md`, `backend/legacy/LEGACY_TO_VL2_MAPPING.md`.
+**Technical pointers:** `docs/LEGACY_PARITY_MAPPING.md`, `docs/CORE_APP_STRUCTURE.md` (shell IA + journey lock), `docs/LOSSLESS_FULLSTACK_PORT.md`, `backend/legacy/LEGACY_TO_VL2_MAPPING.md`.
 
 **Cursor:** `.cursor/rules/myle-legacy-100-parity-lock.mdc` (always on).

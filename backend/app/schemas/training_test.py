@@ -27,3 +27,11 @@ class TrainingTestResultPublic(BaseModel):
     passed: bool
     pass_mark_percent: int = 60
     attempted_at: datetime
+    training_completed: bool = Field(
+        default=False,
+        description="True when server set users.training_status=completed (refresh JWT via sync-identity)",
+    )
+
+
+class MarkTrainingDayBody(BaseModel):
+    day_number: int = Field(ge=1, le=31, description="Must match a row in ``training_videos``")

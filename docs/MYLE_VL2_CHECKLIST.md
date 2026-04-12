@@ -73,15 +73,15 @@ Stub = contract only; **Done** = backed by DB + rules.
 - [x] **Follow-ups:** `follow_ups` table; **`GET/POST/PATCH/DELETE /api/v1/follow-ups`** (scoped via parent lead); Work → **Follow-ups** UI
 - [x] **Retarget:** **`GET /api/v1/retarget`** — active leads with **`status`** in `lost` \| `contacted`; Work → **Retarget** UI + status updates (invalidates with leads/workboard)
 - [x] **Lead flow:** read-only pipeline page (**`work/lead-flow`**) aligned with `Lead.status` values
-- [x] **Execution (nav parity stubs):** **`GET /api/v1/execution/at-risk-leads`**, **`GET /api/v1/execution/lead-ledger`** (admin, **`SystemStubResponse`**) — weak members / leak map / stabilization watch remain **out of product v1**
+- [x] **Execution APIs (backend):** **`GET /api/v1/execution/*`** (e.g. at-risk, lead-ledger) — **no dashboard nav**; shell IA locked in **`docs/CORE_APP_STRUCTURE.md`**
 - [x] **Lead pool** + **recycle bin** — `leads.in_pool`, `leads.deleted_at` (soft delete); `GET /api/v1/lead-pool`; `POST /api/v1/leads/{id}/claim`; `GET /api/v1/leads?deleted_only=true` (admin); `PATCH` **`in_pool`** / **`restored`** (admin); main list + workboard + retarget exclude pool & deleted; Work → **Lead pool** (leader/team), **Admin lead pool** (same API), **Recycle bin**
 - [x] Work → **Intelligence** — placeholder page + **hard redirect** if `GET /api/v1/meta` → `features.intelligence` is false (env `FEATURE_INTELLIGENCE`); product-only, no third-party AI
 - [x] **Team:** **`GET /api/v1/team/members`**, **`POST /api/v1/team/members`** (admin — create user, bcrypt); **`my-team`**, **`enrollment-requests`**, **`reports`**, **`approvals`** — list + enrollment real/empty as before; reports/approvals stubs; **Team → All members** includes admin **Add user** form; all Team nav items wired in FE
 - [x] **System (V1 stubs):** **`GET /api/v1/system/training`**, **`/system/decision-engine`** (admin); **`/system/coaching`** (admin + leader); JSON **`items`/`total`/`note`** — empty until product models data; System → **Training**, **Decision engine**, **Coaching** wired
-- [x] **Analytics (V1 stubs):** **`GET /api/v1/analytics/activity-log`**, **`GET /api/v1/analytics/day-2-report`** (admin); reuse **`SystemStubResponse`** shape; Analytics → **Activity log**, **Day 2 test report** wired
-- [x] **Finance:** **Smart wallet** — **`GET /api/v1/wallet/me`**, **`GET /api/v1/wallet/ledger`**, **`POST /api/v1/wallet/adjustments`** (admin, idempotent key, signed cents); **Recharges** FE posts adjustments; **budget export**, **monthly targets**, **lead pool purchase** (FE nav) = **`GET /api/v1/finance/*`** stubs
-- [x] **Other:** **`GET /api/v1/other/*`** (leaderboard, notice-board, live-session, training, daily-report) — stubs + FE **`ShellStubPage`**
-- [x] **Settings:** **`GET /api/v1/settings/*`** (`app`, `help`, `all-members`, `org-tree`) — stubs + FE **`ShellStubPage`**
+- [x] **Analytics:** **`GET /api/v1/analytics/activity-log`**, **`GET /api/v1/analytics/day-2-report`** (admin); **`/dashboard/analytics/*`** under sidebar **System**
+- [x] **Finance / wallet:** **`GET /api/v1/wallet/me`**, ledger, adjustments; recharge flows in nav — **`GET /api/v1/finance/budget-export`** etc. remain **API-only** (no shell route)
+- [x] **Other / community:** **`GET /api/v1/other/*`** (leaderboard, notice-board, live-session, daily-report) — mixed full + stub pages
+- [x] **Settings:** **`GET /api/v1/settings/*`** (`app`, `help`, `org-tree`) — stubs + FE; **`all-members`** API without duplicate dashboard path (**use Team → Members**)
 
 ## Frontend — shell & UX
 
@@ -104,8 +104,8 @@ Stub = contract only; **Done** = backed by DB + rules.
 - [x] `/dashboard/work/lead-pool` + `/dashboard/work/lead-pool-admin` + `/dashboard/work/recycle-bin`
 - [x] `/dashboard/team/members`, `/dashboard/team/my-team`, `/dashboard/team/enrollment-approvals`
 - [x] `/dashboard/system/training`, `/dashboard/system/decision-engine`, `/dashboard/system/coaching`
-- [x] `/dashboard/analytics/activity-log`, `/dashboard/analytics/day-2-report`
-- [x] `/dashboard/execution/*`, `/dashboard/finance/*` (wallet + recharges + finance stubs), `/dashboard/other/*`, `/dashboard/settings/*`
+- [x] `/dashboard/analytics/activity-log`, `/dashboard/analytics/day-2-report` (nav **System**)
+- [x] `/dashboard/finance/*` (wallet + recharges + recharge flows), `/dashboard/other/*`, `/dashboard/settings/*` — core IA **`docs/CORE_APP_STRUCTURE.md`**
 - [x] `/dashboard/work/add-lead` — same **`LeadsWorkPage`** as active list (create form at top)
 - [x] Nav role vs JWT: `useSyncRoleFromMe` syncs Zustand when `user_id` + server `role` changes; header dropdown remains **preview** until next session change
 - [x] Dashboard route error boundary (`DashboardOutletErrorBoundary` around `<Outlet />`)

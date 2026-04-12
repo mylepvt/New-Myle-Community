@@ -112,6 +112,7 @@ def test_training_test_questions_and_submit(monkeypatch: pytest.MonkeyPatch) -> 
         assert body["score"] == 1
         assert body["passed"] is True
         assert body["percent"] == 100
+        assert body.get("training_completed") is True
     finally:
         asyncio.run(_clear_training_tables())
 

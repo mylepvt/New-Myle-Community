@@ -32,3 +32,4 @@ class TrainingSurfaceResponse(BaseModel):
     videos: list[TrainingVideoRow] = Field(default_factory=list)
     progress: list[TrainingProgressRow] = Field(default_factory=list)
     note: Optional[str] = None
+    unlock_dates: Optional[dict[int, str]] = Field(default=None, description="Calendar unlock dates for days 2-7")

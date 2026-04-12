@@ -2,7 +2,7 @@
 
 **Purpose:** Ek‑ek karke implement / verify karna, **bina guess ke**. Purani taraf sirf tab bharna jab **evidence** ho (screenshot, URL, spec, sign‑off).  
 **Pairing doc:** Har “match” claim **`docs/LEGACY_PARITY_MAPPING.md`** matrix mein lock honi chahiye.  
-**Technical inventory (new app):** `frontend/src/config/dashboard-registry.ts` + `dashboard-route-roles.json` — yahi sidebar + routes ka source of truth hai.
+**Technical inventory (new app):** `docs/CORE_APP_STRUCTURE.md` (journey lock) + `frontend/src/config/dashboard-registry.ts` + `dashboard-route-roles.json` — sidebar + routes ka source of truth.
 
 ---
 
@@ -85,24 +85,25 @@ Yeh order **implement / review** ke liye hai. Legacy row jis wave mein aaye, wah
 | `analytics/activity-log` | `AnalyticsSurfacePage` | |
 | `analytics/day-2-report` | `AnalyticsSurfacePage` | |
 
-### Wave D — Finance
+### Wave D — Finance (shell = wallet + recharges + recharge flows)
 
 | New path | Now | Notes |
 |----------|-----|--------|
 | `finance/wallet` | full | Ledger‑backed |
 | `finance/recharges` | full | Admin |
-| `finance/budget-export` | **stub** | promote when spec ready |
-| `finance/monthly-targets` | **stub** | |
-| `finance/lead-pool` | **stub** | name collision with work lead pool — clarify product |
+| `finance/recharge-request` / `finance/recharge-admin` | full | |
 
-### Wave E — Execution (both **stub**)
+**API-only (no `/dashboard/` route):** `GET /api/v1/finance/budget-export`, `monthly-targets`, `lead-pool` — promote later if product re‑adds nav.
 
-| New path | Stub API |
-|----------|----------|
-| `execution/at-risk-leads` | `/api/v1/execution/at-risk-leads` |
-| `execution/lead-ledger` | `/api/v1/execution/lead-ledger` |
+### Wave E — Execution (**API only** — no dashboard shell route)
 
-### Wave F — Other & Settings (all **stub** today)
+| API | Notes |
+|-----|--------|
+| `GET /api/v1/execution/at-risk-leads` | list shape |
+| `GET /api/v1/execution/lead-ledger` | `SystemStubResponse` |
+| … | See `backend/app/api/v1/execution.py` |
+
+### Wave F — Other & Settings
 
 Promote jab legacy evidence + priority mile — `ShellStubPage` pattern se `full` + real router.
 
@@ -116,7 +117,7 @@ Jab product ne priority na di ho, pehla promote candidate pick karte waqt: **chh
 |-------|----------|----------------|
 | 1 (suggested) | `team/reports` | Wave B; isolated list/report UI; stub API `GET /api/v1/team/reports` already wired in registry |
 | 2 | `other/notice-board` | Often simple read‑only feed |
-| 3 | `execution/at-risk-leads` | If ops needs execution visibility before team reports |
+| 3 | Add `/dashboard/...` for a chosen **`GET /api/v1/execution/*`** | Only if product re‑opens execution in shell (see **`docs/CORE_APP_STRUCTURE.md`**) |
 
 **Product:** Ek row choose karo → `LEGACY_PARITY_MAPPING.md` mein evidence + acceptance → phir neeche **Stub → full** checklist run karo.
 

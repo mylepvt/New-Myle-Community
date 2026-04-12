@@ -1,12 +1,17 @@
 import { useCallback, useState } from 'react'
 
+import { useQueryClient } from '@tanstack/react-query'
+
 import { InsightList } from '@/components/dashboard/InsightList'
+import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import {
   useSystemSurfaceQuery,
   type SystemSurface,
+  type TrainingSurfacePayload,
 } from '@/hooks/use-system-surface-query'
 import { apiFetch } from '@/lib/api'
+import { authSyncIdentity } from '@/lib/auth-api'
 
 type Props = {
   title: string
@@ -25,9 +30,102 @@ type TrainingTestResultRow = {
   score: number
   total_questions: number
   pass_mark_percent: number
+  training_completed?: boolean
 }
 
-function TrainingCertificationBlock() {
+function TrainingDaysBlock({
+  data,
+  onSessionRefresh,
+}: {
+  data: TrainingSurfacePayload
+  onSessionRefresh: () => Promise<void>
+}) {
+  const vids = Array.isArray(data.videos) ? data.videos : []
+  const progress = Array.isArray(data.progress) ? data.progress : []
+  const done = new Map(progress.filter((p) => p.completed).map((p) => [p.day_number, true]))
+  const [loadingDay, setLoadingDay] = useState<number | null>(null)
+  const [err, setErr] = useState<string | null>(null)
+
+  const mark = async (dayNumber: number) => {
+    setLoadingDay(dayNumber)
+    setErr(null)
+    try {
+      const r = await apiFetch('/api/v1/system/training/mark-day', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ day_number: dayNumber }),
+      })
+      const body = await r.json().catch(() => ({}))
+      if (!r.ok) {
+        throw new Error(
+          typeof body === 'object' && body !== null && 'detail' in body
+            ? String((body as { detail?: string }).detail)
+            : r.statusText,
+        )
+      }
+      await onSessionRefresh()
+    } catch (e) {
+      setErr(e instanceof Error ? e.message : 'Could not save progress')
+    } finally {
+      setLoadingDay(null)
+    }
+  }
+
+  if (vids.length === 0) {
+    return <p className="text-foreground/90">No training days configured yet.</p>
+  }
+
+  return (
+    <div className="space-y-3">
+      <p className="text-sm font-medium text-foreground">7-day program</p>
+      <p className="text-ds-caption text-muted-foreground">
+        Mark each day complete after watching. When all days are done, your training gate clears
+        (same as passing the certification test below).
+      </p>
+      <ul className="space-y-2">
+        {vids.map((v) => {
+          const isDone = done.has(v.day_number)
+          return (
+            <li
+              key={v.day_number}
+              className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-white/10 bg-white/[0.04] px-3 py-2 text-foreground/90"
+            >
+              <span className="text-sm">
+                <span className="font-medium">Day {v.day_number}</span>
+                <span className="text-muted-foreground"> — {v.title}</span>
+              </span>
+              {isDone ? (
+                <span className="text-xs font-medium text-emerald-400">Completed</span>
+              ) : (
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="secondary"
+                  className="h-8 text-xs"
+                  disabled={loadingDay === v.day_number}
+                  onClick={() => void mark(v.day_number)}
+                >
+                  {loadingDay === v.day_number ? 'Saving…' : 'Mark complete'}
+                </Button>
+              )}
+            </li>
+          )
+        })}
+      </ul>
+      {err ? (
+        <p className="text-xs text-destructive" role="alert">
+          {err}
+        </p>
+      ) : null}
+    </div>
+  )
+}
+
+function TrainingCertificationBlock({
+  onSessionRefresh,
+}: {
+  onSessionRefresh: () => Promise<void>
+}) {
   const [loading, setLoading] = useState(false)
   const [err, setErr] = useState<string | null>(null)
   const [questions, setQuestions] = useState<TrainingQuestionRow[] | null>(null)
@@ -67,15 +165,20 @@ function TrainingCertificationBlock() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ answers: answersPayload }),
       })
-      const body = await r.json().catch(() => ({}))
+      const body = (await r.json().catch(() => ({}))) as TrainingTestResultRow & {
+        detail?: string
+      }
       if (!r.ok) {
         throw new Error(
           typeof body === 'object' && body !== null && 'detail' in body
-            ? String((body as { detail?: string }).detail)
+            ? String(body.detail)
             : r.statusText,
         )
       }
-      setResult(body as TrainingTestResultRow)
+      setResult(body)
+      if (body.passed && body.training_completed) {
+        await onSessionRefresh()
+      }
     } catch (e) {
       setErr(e instanceof Error ? e.message : 'Submit failed')
     } finally {
@@ -147,6 +250,11 @@ function TrainingCertificationBlock() {
               Below pass mark ({result.pass_mark_percent}%)
             </span>
           )}
+          {result.passed && result.training_completed ? (
+            <span className="ml-1 text-emerald-400/90">
+              — Training complete. You can use the full dashboard now.
+            </span>
+          ) : null}
         </p>
       ) : null}
     </div>
@@ -154,7 +262,14 @@ function TrainingCertificationBlock() {
 }
 
 export function SystemSurfacePage({ title, surface }: Props) {
+  const qc = useQueryClient()
   const { data, isPending, isError, error, refetch } = useSystemSurfaceQuery(surface)
+
+  const onSessionRefresh = useCallback(async () => {
+    await authSyncIdentity()
+    await qc.invalidateQueries({ queryKey: ['auth', 'me'] })
+    await refetch()
+  }, [qc, refetch])
 
   return (
     <div className="max-w-2xl space-y-6">
@@ -176,31 +291,8 @@ export function SystemSurfacePage({ title, surface }: Props) {
       {data && surface === 'training' && 'videos' in data ? (
         <div className="surface-elevated space-y-4 p-4 text-sm text-muted-foreground">
           {data.note ? <p className="text-foreground/90">{data.note}</p> : null}
-          {(() => {
-            const vids = Array.isArray(data.videos) ? data.videos : []
-            if (vids.length === 0) {
-              return <p>No training days configured yet.</p>
-            }
-            return (
-              <ul className="list-inside list-disc space-y-2 text-foreground/90">
-                {vids.map((v) => (
-                  <li key={v.day_number}>
-                    Day {v.day_number}: {v.title}
-                  </li>
-                ))}
-              </ul>
-            )
-          })()}
-          {(() => {
-            const prog = Array.isArray(data.progress) ? data.progress : []
-            return prog.length > 0 ? (
-              <p className="text-ds-caption">
-                Progress rows:{' '}
-                <span className="font-medium text-foreground">{prog.length}</span>
-              </p>
-            ) : null
-          })()}
-          <TrainingCertificationBlock />
+          <TrainingDaysBlock data={data} onSessionRefresh={onSessionRefresh} />
+          <TrainingCertificationBlock onSessionRefresh={onSessionRefresh} />
         </div>
       ) : null}
       {data && surface === 'training' && !('videos' in data) && 'items' in data ? (

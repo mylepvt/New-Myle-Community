@@ -53,3 +53,16 @@ export async function authLogout(): Promise<void> {
     throw new Error(`HTTP ${res.status}`)
   }
 }
+
+/** Reload JWT claims from DB (training completion, registration status, etc.). */
+export async function authSyncIdentity(): Promise<void> {
+  const res = await apiFetch('/api/v1/auth/sync-identity', { method: 'POST' })
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}))
+    const msg =
+      typeof err === 'object' && err !== null && 'error' in err
+        ? String((err as { error?: { message?: string } }).error?.message ?? res.statusText)
+        : res.statusText
+    throw new Error(msg || `HTTP ${res.status}`)
+  }
+}

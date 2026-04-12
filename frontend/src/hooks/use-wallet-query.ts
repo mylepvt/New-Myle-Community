@@ -89,3 +89,169 @@ export function useWalletAdjustmentMutation() {
     onSuccess: () => invalidateWallet(qc),
   })
 }
+
+// Enhanced wallet types
+export type WalletTransaction = {
+  id: number
+  amount_cents: number
+  amount_rupees: number
+  currency: string
+  note: string
+  created_at: string
+}
+
+export type WalletSummaryEnhanced = {
+  balance_cents: number
+  currency: string
+  balance_rupees: number
+  recent_transactions: WalletTransaction[]
+  pending_recharges: number
+  monthly_spending_cents: number
+  monthly_spending_rupees: number
+}
+
+export type WalletOverview = {
+  total_balance_cents: number
+  total_balance_rupees: number
+  user_count: number
+  pending_recharge_requests: number
+  top_balances: Array<{
+    user_id: number
+    balance_cents: number
+    balance_rupees: number
+  }>
+  recent_activity: Array<{
+    id: number
+    user_id: number
+    amount_cents: number
+    amount_rupees: number
+    note: string
+    created_at: string
+  }>
+}
+
+export type LeadClaimRequest = {
+  lead_id: number
+  lead_price_cents: number
+}
+
+export type LeadClaimResponse = {
+  success: boolean
+  message: string
+  lead_id: number
+  amount_deducted_cents: number
+  new_balance_cents: number
+  currency: string
+}
+
+export type WalletAdjustmentRequest = {
+  target_user_id: number
+  amount_cents: number
+  note: string
+}
+
+export type WalletAdjustmentResponse = {
+  success: boolean
+  message: string
+  target_user_id: number
+  amount_cents: number
+  new_balance_cents: number
+  currency: string
+}
+
+// Enhanced wallet API functions
+async function fetchWalletSummaryEnhanced(): Promise<WalletSummaryEnhanced> {
+  const res = await apiFetch('/api/v1/wallet/enhanced/summary')
+  if (!res.ok) await parseError(res)
+  return res.json()
+}
+
+async function fetchWalletOverview(): Promise<WalletOverview> {
+  const res = await apiFetch('/api/v1/wallet/enhanced/overview')
+  if (!res.ok) await parseError(res)
+  return res.json()
+}
+
+async function claimLeadWithWallet(request: LeadClaimRequest): Promise<LeadClaimResponse> {
+  const res = await apiFetch('/api/v1/wallet/enhanced/lead-claim', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(request),
+  })
+  if (!res.ok) await parseError(res)
+  return res.json()
+}
+
+async function createManualAdjustment(request: WalletAdjustmentRequest): Promise<WalletAdjustmentResponse> {
+  const res = await apiFetch('/api/v1/wallet/enhanced/manual-adjustment', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(request),
+  })
+  if (!res.ok) await parseError(res)
+  return res.json()
+}
+
+async function validatePurchase(amountCents: number): Promise<{
+  can_afford: boolean
+  message: string
+  current_balance_cents: number
+  current_balance_rupees: number
+  required_amount_cents: number
+  required_amount_rupees: number
+}> {
+  const res = await apiFetch('/api/v1/wallet/enhanced/validate-purchase', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ amount_cents: amountCents }),
+  })
+  if (!res.ok) await parseError(res)
+  return res.json()
+}
+
+// Enhanced wallet hooks
+export function useWalletSummaryEnhancedQuery() {
+  return useQuery({
+    queryKey: ['wallet', 'enhanced', 'summary'],
+    queryFn: fetchWalletSummaryEnhanced,
+    staleTime: 30_000,
+  })
+}
+
+export function useWalletOverviewQuery() {
+  return useQuery({
+    queryKey: ['wallet', 'enhanced', 'overview'],
+    queryFn: fetchWalletOverview,
+    staleTime: 60_000,
+  })
+}
+
+export function useLeadClaimMutation() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: claimLeadWithWallet,
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['wallet'] })
+      qc.invalidateQueries({ queryKey: ['pipeline'] })
+    },
+  })
+}
+
+export function useManualAdjustmentMutation() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: createManualAdjustment,
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['wallet'] })
+    },
+  })
+}
+
+export function usePurchaseValidationQuery(amountCents: number) {
+  return useQuery({
+    queryKey: ['wallet', 'validate-purchase', amountCents],
+    queryFn: () => validatePurchase(amountCents),
+    staleTime: 30_000,
+    enabled: amountCents > 0,
+  })
+}

@@ -45,6 +45,7 @@ def issue_session_cookies(response: Response, user: User) -> None:
         display_name=dn,
         training_status=user.training_status,
         registration_status=user.registration_status,
+        training_required=user.training_required,
         ver=AUTH_SESSION_VERSION,
         minutes=settings.jwt_access_minutes,
     )

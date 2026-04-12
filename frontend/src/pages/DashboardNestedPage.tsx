@@ -17,6 +17,7 @@ import { IntelligenceWorkPage } from '@/pages/IntelligenceWorkPage'
 import { LeadFlowPage } from '@/pages/LeadFlowPage'
 import { LeadPoolWorkPage } from '@/pages/LeadPoolWorkPage'
 import { RecycleBinWorkPage } from '@/pages/RecycleBinWorkPage'
+import { TeamApprovalsPage } from '@/pages/TeamApprovalsPage'
 import { TeamMembersPage } from '@/pages/TeamMembersPage'
 import { MyTeamPage } from '@/pages/MyTeamPage'
 import { EnrollmentApprovalsPage } from '@/pages/EnrollmentApprovalsPage'
@@ -33,7 +34,10 @@ import { WalletRechargeAdminPage } from '@/pages/WalletRechargeAdminPage'
 import { NoticeBoardPage } from '@/pages/NoticeBoardPage'
 import { TeamReportsPage } from '@/pages/TeamReportsPage'
 import { DailyReportFormPage } from '@/pages/DailyReportFormPage'
-import { ExecutionAtRiskPage } from '@/pages/ExecutionAtRiskPage'
+import TrainingPage from '@/pages/TrainingPage'
+import PipelinePage from '@/pages/PipelinePage'
+import AnalyticsPage from '@/pages/AnalyticsPage'
+import SettingsPage from '@/pages/SettingsPage'
 
 function renderFullUi(ui: FullUiSurface, title: string) {
   switch (ui.kind) {
@@ -55,6 +59,8 @@ function renderFullUi(ui: FullUiSurface, title: string) {
       return <IntelligenceWorkPage title={title} />
     case 'team-members':
       return <TeamMembersPage title={title} />
+    case 'team-approvals':
+      return <TeamApprovalsPage title={title} />
     case 'my-team':
       return <MyTeamPage title={title} />
     case 'enrollment-approvals':
@@ -77,8 +83,14 @@ function renderFullUi(ui: FullUiSurface, title: string) {
       return <TeamReportsPage title={title} />
     case 'daily-report-form':
       return <DailyReportFormPage title={title} />
-    case 'execution-at-risk':
-      return <ExecutionAtRiskPage title={title} />
+    case 'training':
+      return <TrainingPage />
+    case 'pipeline':
+      return <PipelinePage />
+    case 'analytics':
+      return <AnalyticsPage />
+    case 'settings':
+      return <SettingsPage />
     case 'shell-api':
       return <ShellStubPage title={title} apiPath={ui.apiPath} />
     default: {

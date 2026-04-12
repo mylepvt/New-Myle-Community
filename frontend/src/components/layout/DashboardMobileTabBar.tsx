@@ -26,6 +26,8 @@ const SHORT_LABEL: Record<string, string> = {
 type Props = {
   role: Role
   flags: ClientNavFlags
+  /** Legacy-style gate: only Training until completed */
+  trainingLocked?: boolean
   onOpenMenu: () => void
 }
 
@@ -44,7 +46,63 @@ function fourthTabDef(
   return undefined
 }
 
-export function DashboardMobileTabBar({ role, flags, onOpenMenu }: Props) {
+export function DashboardMobileTabBar({
+  role,
+  flags,
+  trainingLocked = false,
+  onOpenMenu,
+}: Props) {
+  if (trainingLocked) {
+    const def = defForPath('system/training')
+    if (!def || !routeDefAccessible(def, role, flags)) return null
+    const Icon = getDashboardNavIcon('system/training')
+    const label =
+      resolveTitleForPath('system/training', role) ?? def.label
+    return (
+      <nav
+        className="fixed bottom-0 left-0 right-0 z-30 border-t border-border/80 bg-background/85 backdrop-blur-xl supports-[backdrop-filter]:bg-background/70 md:hidden"
+        style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
+        role="navigation"
+        aria-label="Training"
+      >
+        <div className="mx-auto flex max-w-lg items-stretch justify-around gap-0 px-1 pt-1">
+          <NavLink
+            to="/dashboard/system/training"
+            className={({ isActive }) =>
+              cn(
+                'flex min-h-[48px] min-w-0 flex-1 flex-col items-center justify-center gap-0.5 rounded-lg px-1 py-1.5 text-[0.65rem] font-medium leading-none transition-colors active:opacity-70',
+                isActive ? 'text-primary' : 'text-muted-foreground',
+              )
+            }
+          >
+            {({ isActive }) => (
+              <>
+                <Icon
+                  className={cn(
+                    'size-[22px] shrink-0',
+                    isActive ? 'text-primary' : 'text-muted-foreground',
+                  )}
+                  strokeWidth={isActive ? 2.25 : 1.75}
+                  aria-hidden
+                />
+                <span className="truncate">{label}</span>
+              </>
+            )}
+          </NavLink>
+          <button
+            type="button"
+            onClick={onOpenMenu}
+            className="flex min-h-[48px] min-w-0 flex-1 flex-col items-center justify-center gap-0.5 rounded-lg px-1 py-1.5 text-[0.65rem] font-medium leading-none text-muted-foreground transition-colors active:opacity-70"
+            aria-label="Open menu"
+          >
+            <MoreHorizontal className="size-[22px] shrink-0" strokeWidth={1.75} aria-hidden />
+            <span className="truncate">Menu</span>
+          </button>
+        </div>
+      </nav>
+    )
+  }
+
   const fourth = fourthTabDef(role, flags)
   const defs: DashboardRouteDef[] = [
     ...TAB_ORDER.map((p) => defForPath(p)).filter(

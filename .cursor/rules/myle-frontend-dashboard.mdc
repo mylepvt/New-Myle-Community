@@ -7,6 +7,7 @@ alwaysApply: false
 # Dashboard shell (must follow)
 
 ## Single source of truth
+- **Product journey + section intent:** **`docs/CORE_APP_STRUCTURE.md`** (core lock). Do not invent a second IA.
 - All `/dashboard/*` paths, sidebar labels, stub API paths, and what renders (`full` vs `stub`) live in **`frontend/src/config/dashboard-registry.ts`** only. **`dashboard-nav.ts`** re-exports nav helpers for imports.
 - Adding a screen = add **one** entry to **`DASHBOARD_ROUTE_DEFS`** (path + section + roles + `surface` + payload). Paths flow into `dashboardChildPathSet` and stub maps automatically — do not maintain parallel lists in **`shell-stub-routes.ts`** (re-export only) or a separate route `if` chain.
 - **Roles (admin / leader / team):** ids, human-readable labels, short labels, and dev seed emails live in **`frontend/src/types/role.ts`** (`ROLE_CATALOG`). Backend mirror: **`backend/app/constants/roles.py`**. Do not duplicate role strings or `dev-*@myle.local` emails elsewhere.
@@ -40,5 +41,4 @@ alwaysApply: false
 - Do not reintroduce header checkboxes for feature flags. **`useMetaQuery`** → `GET /api/v1/meta` supplies **`features.intelligence`**; pass **`ClientNavFlags`** into **`filterDashboardNav(role, flags)`** — never a lone hardcoded toggle in the shell.
 
 ## Plan checklist
-- Cross-check **`docs/MYLE_VL2_CHECKLIST.md`** before closing a milestone so nav, API, and auth items stay aligned.
-- **Legacy parity:** Do not claim “matches old app” in UI or PRs without updating **`docs/LEGACY_PARITY_MAPPING.md`** (evidence-backed legacy row + new path). New-app route inventory in that doc is generated from **`dashboard-registry.ts`** — keep it in sync when adding screens.
+- **Legacy parity:** Do not claim “matches old app” in UI or PRs without updating **`docs/LEGACY_PARITY_MAPPING.md`** (evidence-backed legacy row + new path). Route inventory there must match **`dashboard-registry.ts`** when screens change.

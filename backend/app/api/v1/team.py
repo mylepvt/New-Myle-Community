@@ -17,6 +17,9 @@ from app.core.passwords import hash_password
 from app.models.user import User
 from app.schemas.system_surface import SystemStubResponse
 from app.schemas.team import (
+    PendingRegistrationsResponse,
+    PendingRegistrationItem,
+    RegistrationDecisionBody,
     TeamEnrollmentListResponse,
     TeamMemberCreate,
     TeamMemberListResponse,
@@ -177,6 +180,48 @@ async def team_reports(
     )
 
 
+@router.get("/pending-registrations", response_model=PendingRegistrationsResponse)
+async def list_pending_registrations(
+    user: Annotated[AuthUser, Depends(require_auth_user)],
+    session: Annotated[AsyncSession, Depends(get_db)],
+) -> PendingRegistrationsResponse:
+    """Admin — self-serve signups awaiting approval (legacy ``/admin/approvals``)."""
+    _require_admin(user)
+    q = await session.execute(
+        select(User)
+        .where(User.registration_status == "pending")
+        .order_by(User.created_at.asc())
+    )
+    rows = q.scalars().all()
+    items = [PendingRegistrationItem.model_validate(r) for r in rows]
+    return PendingRegistrationsResponse(items=items, total=len(items))
+
+
+@router.post("/pending-registrations/{target_user_id}/decision")
+async def decide_pending_registration(
+    target_user_id: int,
+    body: RegistrationDecisionBody,
+    user: Annotated[AuthUser, Depends(require_auth_user)],
+    session: Annotated[AsyncSession, Depends(get_db)],
+) -> dict:
+    _require_admin(user)
+    row = await session.get(User, target_user_id)
+    if row is None:
+        raise HTTPException(status_code=http_status.HTTP_404_NOT_FOUND, detail="User not found")
+    st = (row.registration_status or "").strip().lower()
+    if st != "pending":
+        raise HTTPException(
+            status_code=http_status.HTTP_400_BAD_REQUEST,
+            detail="User is not pending approval",
+        )
+    if body.action == "approve":
+        row.registration_status = "approved"
+    else:
+        row.registration_status = "rejected"
+    await session.commit()
+    return {"ok": True, "registration_status": row.registration_status}
+
+
 @router.get("/approvals", response_model=SystemStubResponse)
 async def team_approvals(
     user: Annotated[AuthUser, Depends(require_auth_user)],
@@ -185,11 +230,16 @@ async def team_approvals(
     return SystemStubResponse(
         items=[
             {
+                "title": "Pending registrations",
+                "detail": "Use Team → Approvals for the full list (GET /api/v1/team/pending-registrations).",
+                "href": "team/approvals",
+            },
+            {
                 "title": "₹196 enrollment queue",
-                "detail": "Enrollment proof + approvals are handled under Team → ₹196 Approvals.",
+                "detail": "Enrollment proof + approvals: Team → ₹196 Approvals.",
                 "href": "team/enrollment-approvals",
-            }
+            },
         ],
-        total=1,
-        note="Additional approval queues can be added as persisted models; v1 routes here to enrollment tooling.",
+        total=2,
+        note="Registration approve/reject is on the Approvals page; this endpoint stays for shell parity.",
     )

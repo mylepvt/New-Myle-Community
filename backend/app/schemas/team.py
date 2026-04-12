@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Any, Optional
+from typing import Any, Literal, Optional
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -66,6 +66,28 @@ class TeamReportsLiveSummary(BaseModel):
     day1_total: int
     day2_total: int
     converted_total: int
+
+
+class PendingRegistrationItem(BaseModel):
+    """Self-serve signup awaiting admin (legacy ``/admin/approvals``)."""
+
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    fbo_id: str
+    username: Optional[str] = None
+    email: str
+    phone: Optional[str] = None
+    created_at: datetime
+
+
+class PendingRegistrationsResponse(BaseModel):
+    items: list[PendingRegistrationItem]
+    total: int
+
+
+class RegistrationDecisionBody(BaseModel):
+    action: Literal["approve", "reject"]
 
 
 class TeamReportsResponse(BaseModel):

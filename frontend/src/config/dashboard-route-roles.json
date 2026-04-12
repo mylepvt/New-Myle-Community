@@ -1,7 +1,5 @@
 {
   "": ["admin", "leader", "team"],
-  "execution/at-risk-leads": ["admin"],
-  "execution/lead-ledger": ["admin"],
   "work/leads": ["admin", "leader", "team"],
   "work/workboard": ["admin", "leader", "team"],
   "work/follow-ups": ["admin", "leader"],
@@ -24,19 +22,18 @@
   "analytics/activity-log": ["admin"],
   "analytics/day-2-report": ["admin"],
   "finance/recharges": ["admin"],
-  "finance/budget-export": ["admin"],
-  "finance/monthly-targets": ["admin"],
   "finance/wallet": ["leader", "team"],
-  "finance/lead-pool": ["leader", "team"],
   "other/leaderboard": ["admin", "leader", "team"],
   "other/notice-board": ["admin", "leader", "team"],
   "other/live-session": ["admin", "leader", "team"],
-  "other/training": ["leader", "team"],
   "other/daily-report": ["leader", "team"],
   "settings/app": ["admin"],
   "settings/help": ["admin"],
-  "settings/all-members": ["admin"],
   "settings/org-tree": ["admin"],
+  "settings/profile": ["admin", "leader", "team"],
   "finance/recharge-request": ["admin", "leader", "team"],
-  "finance/recharge-admin": ["admin"]
+  "finance/recharge-admin": ["admin"],
+  "training": ["admin", "leader", "team"],
+  "pipeline": ["admin", "leader", "team"],
+  "analytics": ["admin", "leader", "team"]
 }

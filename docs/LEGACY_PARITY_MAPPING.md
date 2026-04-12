@@ -38,8 +38,6 @@ Roles: **`frontend/src/config/dashboard-route-roles.json`** (exact list per path
 | Path | `surface` | Renders / API |
 |------|------------|----------------|
 | *(home)* | `dashboard-home` | `DashboardHomePage` |
-| `execution/at-risk-leads` | stub | `ShellStubPage` → `GET /api/v1/execution/at-risk-leads` |
-| `execution/lead-ledger` | stub | `GET /api/v1/execution/lead-ledger` |
 | `work/leads` | full | `LeadsWorkPage` (active) |
 | `work/workboard` | full | `WorkboardPage` |
 | `work/follow-ups` | full | `FollowUpsWorkPage` |
@@ -53,30 +51,29 @@ Roles: **`frontend/src/config/dashboard-route-roles.json`** (exact list per path
 | `intelligence` | full | `IntelligenceWorkPage` (gated by `features.intelligence`) |
 | `team/members` | full | `TeamMembersPage` |
 | `team/reports` | full | `TeamReportsPage` + `GET /api/v1/team/reports` (live metrics) |
-| `team/approvals` | stub | `GET /api/v1/team/approvals` |
+| `team/approvals` | full | `TeamApprovalsPage` — `GET /api/v1/team/pending-registrations` + `POST /api/v1/team/pending-registrations/{id}/decision` (approve/reject). Shell parity: `GET /api/v1/team/approvals` still returns short links JSON |
 | `team/enrollment-approvals` | full | `EnrollmentApprovalsPage` |
 | `team/my-team` | full | `MyTeamPage` |
 | `system/training` | full | `SystemSurfacePage` (training) |
 | `system/decision-engine` | full | `SystemSurfacePage` (decision-engine) |
 | `system/coaching` | full | `SystemSurfacePage` (coaching) |
-| `analytics/activity-log` | full | `AnalyticsSurfacePage` (activity-log) |
-| `analytics/day-2-report` | full | `AnalyticsSurfacePage` (day-2-report) |
+| `analytics/activity-log` | full | `AnalyticsSurfacePage` (activity-log) — nav **System** |
+| `analytics/day-2-report` | full | `AnalyticsSurfacePage` (day-2-report) — nav **System** |
 | `finance/recharges` | full | `FinanceRechargesPage` |
-| `finance/budget-export` | stub | `GET /api/v1/finance/budget-export` |
-| `finance/monthly-targets` | stub | `GET /api/v1/finance/monthly-targets` |
 | `finance/wallet` | full | `WalletPage` |
-| `finance/lead-pool` | stub | `GET /api/v1/finance/lead-pool` |
+| `finance/recharge-request` | full | `WalletRechargePage` |
+| `finance/recharge-admin` | full | `WalletRechargeAdminPage` |
 | `other/leaderboard` | stub | `GET /api/v1/other/leaderboard` |
 | `other/notice-board` | full | `NoticeBoardPage` + `GET/POST/DELETE` `/api/v1/other/notice-board` |
 | `other/live-session` | stub | `GET /api/v1/other/live-session` |
-| `other/training` | stub | `GET /api/v1/other/training` |
-| `other/daily-report` | stub | `GET /api/v1/other/daily-report` |
+| `other/daily-report` | full | `DailyReportFormPage` + `GET /api/v1/other/daily-report` |
 | `settings/app` | stub | `GET /api/v1/settings/app` |
 | `settings/help` | stub | `GET /api/v1/settings/help` |
-| `settings/all-members` | stub | `GET /api/v1/settings/all-members` |
 | `settings/org-tree` | stub | `GET /api/v1/settings/org-tree` |
 
 **Stub map derivation:** `SHELL_STUB_API_PATHS` in `dashboard-registry.ts` — do not duplicate.
+
+**Backend-only (no `/dashboard/` route):** `GET /api/v1/execution/*`, `GET /api/v1/finance/budget-export`, `GET /api/v1/finance/monthly-targets`, `GET /api/v1/finance/lead-pool`, `GET /api/v1/other/training`, `GET /api/v1/settings/all-members` — see **`docs/CORE_APP_STRUCTURE.md`**.
 
 ---
 

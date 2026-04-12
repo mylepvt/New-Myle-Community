@@ -14,6 +14,12 @@ export type MeResponse = {
   display_name: string | null
   /** JWT `ver` claim (legacy AUTH_SESSION_VERSION parity). */
   auth_version: number | null
+  /** Legacy `training_status` (e.g. pending, completed, not_required). */
+  training_status: string | null
+  /** When true, full dashboard is gated until training is completed (legacy). */
+  training_required: boolean | null
+  /** pending | approved | rejected */
+  registration_status: string | null
 }
 
 export async function fetchAuthMe(): Promise<MeResponse> {
@@ -32,6 +38,14 @@ export async function fetchAuthMe(): Promise<MeResponse> {
     display_name: raw.display_name ?? null,
     auth_version:
       typeof raw.auth_version === 'number' ? raw.auth_version : null,
+    training_status:
+      typeof raw.training_status === 'string' ? raw.training_status : null,
+    training_required:
+      typeof raw.training_required === 'boolean' ? raw.training_required : null,
+    registration_status:
+      typeof raw.registration_status === 'string'
+        ? raw.registration_status
+        : null,
   }
 }
 

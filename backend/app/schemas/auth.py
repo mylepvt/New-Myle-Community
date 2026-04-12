@@ -33,6 +33,10 @@ class MeResponse(BaseModel):
         default=None,
         description="Legacy training_status: not_required | pending | completed | unlocked",
     )
+    training_required: Optional[bool] = Field(
+        default=None,
+        description="When true, user must complete training before full dashboard (legacy gate)",
+    )
     registration_status: Optional[str] = Field(
         default=None,
         description="pending | approved | rejected — account approval gate",

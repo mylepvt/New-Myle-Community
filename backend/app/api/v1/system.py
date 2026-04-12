@@ -11,13 +11,17 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status as http_status
 
 from app.api.deps import AuthUser, get_db, require_auth_user
+from app.models.training_progress import TrainingProgress
 from app.models.training_question import TrainingQuestion
 from app.models.training_test_attempt import TrainingTestAttempt
+from app.models.training_video import TrainingVideo
+from app.models.user import User
 from app.schemas.system_surface import (
     SystemStubResponse,
     TrainingSurfaceResponse,
 )
 from app.schemas.training_test import (
+    MarkTrainingDayBody,
     TrainingTestQuestionPublic,
     TrainingTestResultPublic,
     TrainingTestSubmitBody,
@@ -46,6 +50,97 @@ async def system_training(
     session: Annotated[AsyncSession, Depends(get_db)],
 ) -> TrainingSurfaceResponse:
     """7-day training catalog + caller's completion rows (legacy training home data)."""
+    return await build_training_surface(session, user.user_id)
+
+
+@router.post("/training/mark-day", response_model=TrainingSurfaceResponse)
+async def mark_training_day(
+    body: MarkTrainingDayBody,
+    user: Annotated[AuthUser, Depends(require_auth_user)],
+    session: Annotated[AsyncSession, Depends(get_db)],
+) -> TrainingSurfaceResponse:
+    """Mark one training day complete (legacy day-by-day). All catalog days done → training gate cleared."""
+    vq = await session.execute(
+        select(TrainingVideo.id).where(TrainingVideo.day_number == body.day_number)
+    )
+    if vq.scalar_one_or_none() is None:
+        raise HTTPException(
+            status_code=http_status.HTTP_404_NOT_FOUND,
+            detail="Invalid training day",
+        )
+
+    # Get current progress to enforce sequential and calendar rules
+    current_progress = await session.execute(
+        select(TrainingProgress).where(TrainingProgress.user_id == user.user_id)
+    )
+    progress_rows = current_progress.scalars().all()
+    
+    # Check sequential completion (must complete previous days first)
+    if body.day_number > 1:
+        previous_completed = any(
+            p.day_number == body.day_number - 1 and p.completed 
+            for p in progress_rows
+        )
+        if not previous_completed:
+            raise HTTPException(
+                status_code=http_status.HTTP_400_BAD_REQUEST,
+                detail=f"Complete Day {body.day_number - 1} first",
+            )
+    
+    # Check calendar enforcement for days 2-7
+    if body.day_number > 1:
+        day1_progress = next((p for p in progress_rows if p.day_number == 1), None)
+        if day1_progress and day1_progress.completed_at:
+            days_since_day1 = (datetime.now(timezone.utc) - day1_progress.completed_at).days
+            min_days_required = body.day_number - 1
+            if days_since_day1 < min_days_required:
+                raise HTTPException(
+                    status_code=http_status.HTTP_400_BAD_REQUEST,
+                    detail=f"Day {body.day_number} unlocks {min_days_required} days after completing Day 1",
+                )
+
+    now = datetime.now(timezone.utc)
+    existing = await session.execute(
+        select(TrainingProgress).where(
+            TrainingProgress.user_id == user.user_id,
+            TrainingProgress.day_number == body.day_number,
+        )
+    )
+    row = existing.scalar_one_or_none()
+    if row:
+        row.completed = True
+        row.completed_at = now
+    else:
+        session.add(
+            TrainingProgress(
+                user_id=user.user_id,
+                day_number=body.day_number,
+                completed=True,
+                completed_at=now,
+            )
+        )
+    await session.flush()
+
+    catalog = (
+        await session.execute(
+            select(TrainingVideo.day_number).order_by(TrainingVideo.day_number.asc())
+        )
+    ).scalars().all()
+    if catalog:
+        done_rows = await session.execute(
+            select(TrainingProgress.day_number).where(
+                TrainingProgress.user_id == user.user_id,
+                TrainingProgress.completed.is_(True),
+            )
+        )
+        done_set = set(done_rows.scalars().all())
+        if all(d in done_set for d in catalog):
+            urow = await session.get(User, user.user_id)
+            if urow is not None:
+                urow.training_status = "completed"
+                urow.training_required = False
+
+    await session.commit()
     return await build_training_surface(session, user.user_id)
 
 
@@ -108,6 +203,16 @@ async def training_test_submit(
         attempted_at=now,
     )
     session.add(attempt)
+    await session.flush()
+
+    training_completed = False
+    if passed:
+        urow = await session.get(User, user.user_id)
+        if urow is not None:
+            urow.training_status = "completed"
+            urow.training_required = False
+            training_completed = True
+
     await session.commit()
     await session.refresh(attempt)
 
@@ -118,6 +223,7 @@ async def training_test_submit(
         passed=passed,
         pass_mark_percent=PASS_MARK_PERCENT,
         attempted_at=attempt.attempted_at,
+        training_completed=training_completed,
     )
 
 

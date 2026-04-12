@@ -81,6 +81,10 @@ async def read_me(request: Request) -> MeResponse:
     ts_s = ts_raw if isinstance(ts_raw, str) else None
     rs_raw = payload.get("registration_status")
     rs_s = rs_raw if isinstance(rs_raw, str) else None
+    tr_raw = payload.get("training_required")
+    tr_b: bool | None = None
+    if isinstance(tr_raw, bool):
+        tr_b = tr_raw
     return MeResponse(
         authenticated=True,
         role=role,
@@ -91,6 +95,7 @@ async def read_me(request: Request) -> MeResponse:
         display_name=dn_s,
         auth_version=ver_s,
         training_status=ts_s,
+        training_required=tr_b,
         registration_status=rs_s,
     )
 

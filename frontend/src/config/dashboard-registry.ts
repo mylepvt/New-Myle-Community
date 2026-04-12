@@ -67,6 +67,7 @@ export type FullUiSurface =
   | { kind: 'intelligence' }
   | { kind: 'team-members' }
   | { kind: 'my-team' }
+  | { kind: 'team-approvals' }
   | { kind: 'enrollment-approvals' }
   | {
       kind: 'system'
@@ -83,7 +84,10 @@ export type FullUiSurface =
   | { kind: 'notice-board' }
   | { kind: 'team-reports' }
   | { kind: 'daily-report-form' }
-  | { kind: 'execution-at-risk' }
+  | { kind: 'training' }
+  | { kind: 'pipeline' }
+  | { kind: 'analytics' }
+  | { kind: 'settings' }
   /** Loads `ShellStubPage` with a GET that returns `SystemStubResponse` (items + note). */
   | { kind: 'shell-api'; apiPath: string }
 
@@ -101,16 +105,14 @@ export type DashboardRouteDef = {
   | { surface: 'placeholder' }
 )
 
-/** Sidebar section order — aligned with Myle Community mobile nav (Work block has no heading). */
+/** Sidebar section order — core product journey: work → wallet → team → community → system → settings. */
 const SECTION_ORDER: { id: string; label: string }[] = [
   { id: 'main', label: '' },
   { id: 'work', label: '' },
+  { id: 'finance', label: 'Wallet' },
   { id: 'team', label: 'Team' },
+  { id: 'other', label: 'Community' },
   { id: 'system', label: 'System' },
-  { id: 'analytics', label: 'Analytics' },
-  { id: 'finance', label: 'Finance' },
-  { id: 'other', label: 'Other' },
-  { id: 'execution', label: 'Execution' },
   { id: 'settings', label: 'Settings' },
 ]
 
@@ -238,7 +240,7 @@ export const DASHBOARD_ROUTE_DEFS: DashboardRouteDef[] = [
     label: 'Approvals',
     roles: routeRoles('team/approvals'),
     surface: 'full',
-    ui: { kind: 'shell-api', apiPath: '/api/v1/team/approvals' },
+    ui: { kind: 'team-approvals' },
   },
   {
     path: 'team/enrollment-approvals',
@@ -282,7 +284,7 @@ export const DASHBOARD_ROUTE_DEFS: DashboardRouteDef[] = [
   },
   {
     path: 'analytics/activity-log',
-    section: { id: 'analytics', label: 'Analytics' },
+    section: { id: 'system', label: 'System' },
     label: 'Activity log',
     roles: routeRoles('analytics/activity-log'),
     surface: 'full',
@@ -290,7 +292,7 @@ export const DASHBOARD_ROUTE_DEFS: DashboardRouteDef[] = [
   },
   {
     path: 'analytics/day-2-report',
-    section: { id: 'analytics', label: 'Analytics' },
+    section: { id: 'system', label: 'System' },
     label: 'Day 2 test report',
     roles: routeRoles('analytics/day-2-report'),
     surface: 'full',
@@ -298,47 +300,23 @@ export const DASHBOARD_ROUTE_DEFS: DashboardRouteDef[] = [
   },
   {
     path: 'finance/recharges',
-    section: { id: 'finance', label: 'Finance' },
+    section: { id: 'finance', label: 'Wallet' },
     label: 'Recharges',
     roles: routeRoles('finance/recharges'),
     surface: 'full',
     ui: { kind: 'finance-recharges' },
   },
   {
-    path: 'finance/budget-export',
-    section: { id: 'finance', label: 'Finance' },
-    label: 'Budget export',
-    roles: routeRoles('finance/budget-export'),
-    surface: 'full',
-    ui: { kind: 'shell-api', apiPath: '/api/v1/finance/budget-export' },
-  },
-  {
-    path: 'finance/monthly-targets',
-    section: { id: 'finance', label: 'Finance' },
-    label: 'Monthly targets',
-    roles: routeRoles('finance/monthly-targets'),
-    surface: 'full',
-    ui: { kind: 'shell-api', apiPath: '/api/v1/finance/monthly-targets' },
-  },
-  {
     path: 'finance/wallet',
-    section: { id: 'finance', label: 'Finance' },
+    section: { id: 'finance', label: 'Wallet' },
     label: 'My wallet',
     roles: routeRoles('finance/wallet'),
     surface: 'full',
     ui: { kind: 'wallet' },
   },
   {
-    path: 'finance/lead-pool',
-    section: { id: 'finance', label: 'Finance' },
-    label: 'Lead pool',
-    roles: routeRoles('finance/lead-pool'),
-    surface: 'full',
-    ui: { kind: 'shell-api', apiPath: '/api/v1/finance/lead-pool' },
-  },
-  {
     path: 'finance/recharge-request',
-    section: { id: 'finance', label: 'Finance' },
+    section: { id: 'finance', label: 'Wallet' },
     label: 'Recharge wallet',
     roles: routeRoles('finance/recharge-request'),
     surface: 'full',
@@ -346,7 +324,7 @@ export const DASHBOARD_ROUTE_DEFS: DashboardRouteDef[] = [
   },
   {
     path: 'finance/recharge-admin',
-    section: { id: 'finance', label: 'Finance' },
+    section: { id: 'finance', label: 'Wallet' },
     label: 'Recharge requests',
     roles: routeRoles('finance/recharge-admin'),
     surface: 'full',
@@ -354,7 +332,7 @@ export const DASHBOARD_ROUTE_DEFS: DashboardRouteDef[] = [
   },
   {
     path: 'other/leaderboard',
-    section: { id: 'other', label: 'Other' },
+    section: { id: 'other', label: 'Community' },
     label: 'Leaderboard',
     roles: routeRoles('other/leaderboard'),
     surface: 'full',
@@ -362,7 +340,7 @@ export const DASHBOARD_ROUTE_DEFS: DashboardRouteDef[] = [
   },
   {
     path: 'other/notice-board',
-    section: { id: 'other', label: 'Other' },
+    section: { id: 'other', label: 'Community' },
     label: 'Notice board',
     roles: routeRoles('other/notice-board'),
     surface: 'full',
@@ -370,43 +348,19 @@ export const DASHBOARD_ROUTE_DEFS: DashboardRouteDef[] = [
   },
   {
     path: 'other/live-session',
-    section: { id: 'other', label: 'Other' },
+    section: { id: 'other', label: 'Community' },
     label: 'Live session',
     roles: routeRoles('other/live-session'),
     surface: 'full',
     ui: { kind: 'shell-api', apiPath: '/api/v1/other/live-session' },
   },
   {
-    path: 'other/training',
-    section: { id: 'other', label: 'Other' },
-    label: 'My training',
-    roles: routeRoles('other/training'),
-    surface: 'full',
-    ui: { kind: 'system', surface: 'training' },
-  },
-  {
     path: 'other/daily-report',
-    section: { id: 'other', label: 'Other' },
+    section: { id: 'other', label: 'Community' },
     label: 'Daily report',
     roles: routeRoles('other/daily-report'),
     surface: 'full',
     ui: { kind: 'daily-report-form' },
-  },
-  {
-    path: 'execution/at-risk-leads',
-    section: { id: 'execution', label: 'Execution' },
-    label: 'At-risk leads',
-    roles: routeRoles('execution/at-risk-leads'),
-    surface: 'full',
-    ui: { kind: 'execution-at-risk' },
-  },
-  {
-    path: 'execution/lead-ledger',
-    section: { id: 'execution', label: 'Execution' },
-    label: 'Lead ledger',
-    roles: routeRoles('execution/lead-ledger'),
-    surface: 'full',
-    ui: { kind: 'shell-api', apiPath: '/api/v1/execution/lead-ledger' },
   },
   {
     path: 'settings/app',
@@ -425,20 +379,44 @@ export const DASHBOARD_ROUTE_DEFS: DashboardRouteDef[] = [
     ui: { kind: 'shell-api', apiPath: '/api/v1/settings/help' },
   },
   {
-    path: 'settings/all-members',
-    section: { id: 'settings', label: 'Settings' },
-    label: 'All members',
-    roles: routeRoles('settings/all-members'),
-    surface: 'full',
-    ui: { kind: 'team-members' },
-  },
-  {
     path: 'settings/org-tree',
     section: { id: 'settings', label: 'Settings' },
     label: 'Org tree',
     roles: routeRoles('settings/org-tree'),
     surface: 'full',
     ui: { kind: 'shell-api', apiPath: '/api/v1/settings/org-tree' },
+  },
+  {
+    path: 'training',
+    section: { id: 'system', label: 'System' },
+    label: 'Training',
+    roles: routeRoles('training'),
+    surface: 'full',
+    ui: { kind: 'training' },
+  },
+  {
+    path: 'pipeline',
+    section: { id: 'work', label: '' },
+    label: 'Pipeline',
+    roles: routeRoles('pipeline'),
+    surface: 'full',
+    ui: { kind: 'pipeline' },
+  },
+  {
+    path: 'analytics',
+    section: { id: 'system', label: 'System' },
+    label: 'Analytics',
+    roles: routeRoles('analytics'),
+    surface: 'full',
+    ui: { kind: 'analytics' },
+  },
+  {
+    path: 'settings/profile',
+    section: { id: 'settings', label: 'Settings' },
+    label: 'Profile',
+    roles: routeRoles('settings/profile'),
+    surface: 'full',
+    ui: { kind: 'settings' },
   },
 ]
 

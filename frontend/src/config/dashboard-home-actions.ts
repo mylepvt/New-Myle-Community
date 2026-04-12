@@ -1,22 +1,19 @@
 /**
- * Dashboard home: quick actions + hero copy — **single ordered path list**.
+ * Dashboard home: quick actions — **core journey only** (see `docs/CORE_APP_STRUCTURE.md`).
  * Who may open each path = `dashboard-route-roles.json` + registry (`routeDefAccessible`);
- * labels = `resolveTitleForPath` / registry (no second copy of “All leads” vs “My leads”).
+ * labels = `resolveTitleForPath` / registry.
  */
 import type { LucideIcon } from 'lucide-react'
 import {
-  Archive,
   ClipboardCheck,
+  ClipboardList,
+  FileBarChart,
   GraduationCap,
   Kanban,
-  ListTodo,
+  Megaphone,
   Sparkles,
-  Target,
-  Trash2,
-  UserPlus,
   Users,
   Wallet,
-  Waypoints,
 } from 'lucide-react'
 
 import {
@@ -33,42 +30,34 @@ export const DASHBOARD_HOME_OVERVIEW_TITLE: Record<Role, string> = {
   team: 'Your workspace',
 }
 
-/** Display order — filtered by server role + `routeDefAccessible` (same rules as sidebar). */
+/** Display order — spine: leads → workboard → pool → wallet → recharge → training → report → approvals → team reports → notice → intelligence (if enabled). */
 const HOME_QUICK_ACTION_PATHS: readonly string[] = [
   'work/leads',
   'work/workboard',
-  'work/follow-ups',
-  'work/retarget',
-  'work/archived',
-  'work/add-lead',
   'work/lead-pool',
   'work/lead-pool-admin',
-  'work/recycle-bin',
-  'work/lead-flow',
-  'team/enrollment-approvals',
-  'team/my-team',
   'finance/wallet',
-  'finance/recharges',
-  'other/training',
+  'finance/recharge-request',
+  'system/training',
+  'other/daily-report',
+  'team/enrollment-approvals',
+  'team/reports',
+  'other/notice-board',
   'intelligence',
 ]
 
 const PATH_ICONS: Partial<Record<string, LucideIcon>> = {
   'work/leads': Users,
-  'work/add-lead': UserPlus,
-  'work/recycle-bin': Trash2,
   'work/workboard': Kanban,
-  'work/follow-ups': ListTodo,
-  'work/retarget': Target,
-  'work/archived': Archive,
-  'work/lead-flow': Waypoints,
   'work/lead-pool': Users,
   'work/lead-pool-admin': Users,
-  'team/enrollment-approvals': ClipboardCheck,
-  'team/my-team': Users,
   'finance/wallet': Wallet,
-  'finance/recharges': Wallet,
-  'other/training': GraduationCap,
+  'finance/recharge-request': Wallet,
+  'system/training': GraduationCap,
+  'other/daily-report': ClipboardList,
+  'team/enrollment-approvals': ClipboardCheck,
+  'team/reports': FileBarChart,
+  'other/notice-board': Megaphone,
   intelligence: Sparkles,
 }
 

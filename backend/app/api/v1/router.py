@@ -7,6 +7,7 @@ from fastapi import APIRouter
 from app.api.v1 import (
     analytics,
     auth,
+    certificate,
     enroll,
     execution,
     finance_surfaces,
@@ -17,6 +18,8 @@ from app.api.v1 import (
     leads,
     meta,
     other_pages,
+    payments,
+    pipeline,
     realtime_ws,
     reports,
     retarget,
@@ -24,6 +27,7 @@ from app.api.v1 import (
     system,
     team,
     wallet,
+    wallet_enhanced,
     workboard,
 )
 
@@ -52,3 +56,7 @@ api_router.include_router(realtime_ws.router, tags=["realtime"])
 api_router.include_router(enroll.router, prefix="/enroll", tags=["enroll"])
 # Public watch route — no /enroll prefix so the URL is /api/v1/watch/{token}
 api_router.include_router(enroll.watch_router, tags=["watch"])
+api_router.include_router(certificate.router, tags=["certificate"])
+api_router.include_router(pipeline.router, prefix="/pipeline", tags=["pipeline"])
+api_router.include_router(payments.router, prefix="/payments", tags=["payments"])
+api_router.include_router(wallet_enhanced.router, prefix="/wallet", tags=["wallet-enhanced"])

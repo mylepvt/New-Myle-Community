@@ -1,5 +1,27 @@
+import { useState } from 'react'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
-import { useWalletLedgerQuery, useWalletMeQuery } from '@/hooks/use-wallet-query'
+import { 
+  Wallet, 
+  TrendingUp, 
+  TrendingDown, 
+  CreditCard, 
+  ArrowUpRight,
+  ArrowDownRight,
+  RefreshCw,
+  Settings
+} from 'lucide-react'
+import { 
+  useWalletLedgerQuery, 
+  useWalletMeQuery,
+  useWalletSummaryEnhancedQuery,
+  useWalletOverviewQuery,
+  useLeadClaimMutation,
+  useManualAdjustmentMutation
+} from '@/hooks/use-wallet-query'
+import { useAuthMeQuery } from '@/hooks/use-auth-me-query'
 
 type Props = { title: string }
 
@@ -10,7 +32,13 @@ function formatMoney(cents: number, currency: string) {
 
 export function WalletPage({ title }: Props) {
   const me = useWalletMeQuery()
+  const enhanced = useWalletSummaryEnhancedQuery()
+  const overview = useWalletOverviewQuery()
   const ledger = useWalletLedgerQuery(null)
+  const { data: authData } = useAuthMeQuery()
+  const claimMutation = useLeadClaimMutation()
+  const adjustmentMutation = useManualAdjustmentMutation()
+  const [showAdminPanel, setShowAdminPanel] = useState(false)
 
   return (
     <div className="max-w-2xl space-y-6">
