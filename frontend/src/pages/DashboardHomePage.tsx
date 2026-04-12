@@ -16,10 +16,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import {
-  DASHBOARD_HOME_OVERVIEW_TITLE,
-  getHomeQuickActions,
-} from '@/config/dashboard-home-actions'
+import { getHomeQuickActions } from '@/config/dashboard-home-actions'
 import { useAuthMeQuery } from '@/hooks/use-auth-me-query'
 import { useDashboardShellRole } from '@/hooks/use-dashboard-shell-role'
 import { useFollowUpsQuery } from '@/hooks/use-follow-ups-query'
@@ -27,7 +24,7 @@ import { useLeadPoolQuery } from '@/hooks/use-lead-pool-query'
 import { LEAD_STATUS_OPTIONS, type LeadPublic } from '@/hooks/use-leads-query'
 import { DEFAULT_META, useMetaQuery } from '@/hooks/use-meta-query'
 import { useWorkboardQuery } from '@/hooks/use-workboard-query'
-import { t } from '@/lib/i18n'
+import { cn } from '@/lib/utils'
 
 /** Canonical stage labels — same source as leads/workboard (legacy parity; all roles). */
 function statusLabel(status: string): string {
@@ -56,7 +53,7 @@ function recentFromWorkboard(columns: { items?: LeadPublic[] }[] | undefined): L
 }
 
 export function DashboardHomePage() {
-  const { role, isPending: rolePending } = useDashboardShellRole()
+  const { role } = useDashboardShellRole()
   const { data: me, isPending: mePending } = useAuthMeQuery()
   const { data: meta } = useMetaQuery()
   const navFlags = useMemo(
@@ -142,34 +139,9 @@ export function DashboardHomePage() {
       <Card className="overflow-hidden border-primary/25 bg-gradient-to-br from-card via-card to-primary/[0.06]">
         <CardHeader className="flex flex-row items-start justify-between gap-4 pb-2">
           <div>
-            <CardDescription>Today · {meta?.environment ?? '…'}</CardDescription>
-            <CardTitle className="mt-1 font-heading text-ds-h1 capitalize tracking-tight">
+            <CardTitle className="font-heading text-ds-h1 capitalize tracking-tight">
               Welcome, {firstName}!
             </CardTitle>
-            <p className="mt-2 max-w-xl text-ds-body text-muted-foreground">
-              {rolePending && role == null ? (
-                <span className="inline-block h-4 w-48 animate-pulse rounded bg-muted/60" />
-              ) : (
-                <>
-                  {role != null ? DASHBOARD_HOME_OVERVIEW_TITLE[role] : 'Dashboard'} —{' '}
-                  {t('appTagline')}
-                </>
-              )}
-            </p>
-            {me?.fbo_id || me?.email ? (
-              <p className="mt-1 text-ds-caption text-subtle">
-                {me?.fbo_id ? (
-                  <>
-                    <span className="font-medium text-foreground/90">{me.fbo_id}</span>
-                    {me?.email ? (
-                      <span className="text-muted-foreground"> · {me.email}</span>
-                    ) : null}
-                  </>
-                ) : (
-                  me?.email
-                )}
-              </p>
-            ) : null}
           </div>
           <div className="hidden shrink-0 rounded-2xl border border-primary/20 bg-primary/10 p-3 text-primary sm:block">
             <TrendingUp className="size-10" strokeWidth={1.25} aria-hidden />
@@ -236,7 +208,7 @@ export function DashboardHomePage() {
                     <p className="text-ds-caption font-medium uppercase tracking-wide text-muted-foreground">
                       Open follow-ups
                     </p>
-                    <p className="mt-2 font-heading text-3xl font-semibold tabular-nums text-primary">
+                    <p className={cn('mt-2 font-heading text-3xl font-semibold tabular-nums', openFollowUps > 0 ? 'text-primary' : 'text-muted-foreground')}>
                       {openFollowUps}
                     </p>
                     <p className="mt-1 text-ds-caption text-subtle">
@@ -251,7 +223,7 @@ export function DashboardHomePage() {
                   <p className="text-ds-caption font-medium uppercase tracking-wide text-muted-foreground">
                     Open follow-ups
                   </p>
-                  <p className="mt-2 font-heading text-3xl font-semibold tabular-nums text-primary">
+                  <p className={cn('mt-2 font-heading text-3xl font-semibold tabular-nums', openFollowUps > 0 ? 'text-primary' : 'text-muted-foreground')}>
                     {openFollowUps}
                   </p>
                   <p className="mt-1 text-ds-caption text-subtle">
@@ -269,7 +241,7 @@ export function DashboardHomePage() {
                   <p className="text-ds-caption font-medium uppercase tracking-wide text-muted-foreground">
                     Converted
                   </p>
-                  <p className="mt-2 font-heading text-3xl font-semibold tabular-nums text-success">
+                  <p className={cn('mt-2 font-heading text-3xl font-semibold tabular-nums', metrics.won > 0 ? 'text-success' : 'text-muted-foreground')}>
                     {metrics.won}
                   </p>
                   <p className="mt-1 text-ds-caption text-subtle">
@@ -313,6 +285,13 @@ export function DashboardHomePage() {
           <CardContent>
             {wb.isPending && sessionReady ? (
               <LoadingState label="Loading pipeline…" />
+            ) : metrics.bars.length > 0 && metrics.bars.every((b) => b.total === 0) ? (
+              <div className="flex flex-col items-center justify-center gap-3 py-10 text-center">
+                <p className="text-ds-body text-muted-foreground">No pipeline activity yet.</p>
+                <Button variant="outline" size="sm" asChild>
+                  <Link to="/dashboard/work/leads">Add lead</Link>
+                </Button>
+              </div>
             ) : (
               <>
                 <div className="flex h-44 items-end justify-between gap-1.5 border-b border-border/60 px-0.5 pb-0 sm:gap-2">
@@ -351,7 +330,6 @@ export function DashboardHomePage() {
         <Card className="border-primary/20 lg:col-span-2">
           <CardHeader>
             <CardTitle className="text-ds-h3">Quick actions</CardTitle>
-            <CardDescription>Jump to common screens</CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col gap-2">
             {quickActions.map((action) => {
@@ -445,12 +423,6 @@ export function DashboardHomePage() {
           )}
         </CardContent>
       </Card>
-
-      <p className="text-center text-ds-caption text-subtle">
-        {meta
-          ? `${meta.name} · API v${meta.api_version}`
-          : 'Loading server meta…'}
-      </p>
 
       {mePending && !me ? (
         <div className="flex justify-center py-8">

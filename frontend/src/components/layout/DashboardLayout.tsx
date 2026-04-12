@@ -208,8 +208,9 @@ export function DashboardLayout() {
         <div className="mt-auto shrink-0 border-t border-border p-3">
           <Button
             type="button"
-            variant="outline"
-            className="w-full gap-2 border-destructive/50 text-destructive hover:bg-destructive/12 hover:text-destructive"
+            variant="ghost"
+            size="sm"
+            className="w-full gap-2 text-muted-foreground hover:text-foreground"
             onClick={() => void handleLogout()}
           >
             <LogOut className="size-4" aria-hidden />

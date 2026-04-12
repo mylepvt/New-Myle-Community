@@ -108,20 +108,22 @@ export function GateAssistantCard({ sessionReady }: Props) {
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div>
-          <div className="mb-1 flex justify-between text-ds-caption text-muted-foreground">
-            <span>Checklist</span>
-            <span>
-              {data.progress_done} / {data.progress_total}
-            </span>
+        {pct < 100 ? (
+          <div>
+            <div className="mb-1 flex justify-between text-ds-caption text-muted-foreground">
+              <span>Checklist</span>
+              <span>
+                {data.progress_done} / {data.progress_total}
+              </span>
+            </div>
+            <div className="h-2 overflow-hidden rounded-full bg-muted/60">
+              <div
+                className="h-full rounded-full bg-primary transition-[width]"
+                style={{ width: `${pct}%` }}
+              />
+            </div>
           </div>
-          <div className="h-2 overflow-hidden rounded-full bg-muted/60">
-            <div
-              className="h-full rounded-full bg-primary transition-[width]"
-              style={{ width: `${pct}%` }}
-            />
-          </div>
-        </div>
+        ) : null}
 
         <ul className="space-y-2 text-sm">
           {data.checklist.map((c) => (
@@ -138,6 +140,17 @@ export function GateAssistantCard({ sessionReady }: Props) {
           ))}
         </ul>
 
+        <div className="flex flex-wrap gap-2">
+          <Button variant="default" size="sm" asChild>
+            <Link to="/dashboard/work/follow-ups">View queue</Link>
+          </Button>
+          {data.next_href ? (
+            <Button variant="outline" size="sm" asChild>
+              <Link to={`/dashboard/${data.next_href}`}>Open follow-ups</Link>
+            </Button>
+          ) : null}
+        </div>
+
         <div className="rounded-lg border border-border/60 bg-muted/20 px-3 py-2 text-sm">
           <p className="font-medium text-foreground">{data.next_action}</p>
           <p className="mt-1 text-ds-caption text-muted-foreground">
@@ -145,21 +158,6 @@ export function GateAssistantCard({ sessionReady }: Props) {
             {data.active_pipeline_leads}
           </p>
         </div>
-
-        <div className="flex flex-wrap gap-2">
-          {data.next_href ? (
-            <Button variant="default" size="sm" asChild>
-              <Link to={`/dashboard/${data.next_href}`}>Open follow-ups</Link>
-            </Button>
-          ) : null}
-          <Button variant="outline" size="sm" asChild>
-            <Link to="/dashboard/work/follow-ups">View queue</Link>
-          </Button>
-        </div>
-
-        {data.note ? (
-          <p className="text-ds-caption text-subtle">{data.note}</p>
-        ) : null}
       </CardContent>
     </Card>
   )
