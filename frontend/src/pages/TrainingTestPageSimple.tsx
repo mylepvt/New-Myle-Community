@@ -6,13 +6,21 @@ import { CheckCircle, XCircle, Clock, Award } from 'lucide-react'
 import { useTrainingTestQuestionsQuery, useSubmitTrainingTestMutation } from '@/hooks/use-training-query'
 import { useAuthMeQuery } from '@/hooks/use-auth-me-query'
 
+type TestResult = {
+  passed: boolean
+  score: number
+  total_questions: number
+  percent: number
+  pass_mark_percent: number
+}
+
 export default function TrainingTestPage() {
   const { data: questions, isLoading: questionsLoading } = useTrainingTestQuestionsQuery()
   const { data: authData } = useAuthMeQuery()
   const submitMutation = useSubmitTrainingTestMutation()
   const [answers, setAnswers] = useState<Record<string, string>>({})
   const [showResults, setShowResults] = useState(false)
-  const [results, setResults] = useState<unknown>(null)
+  const [results, setResults] = useState<TestResult | null>(null)
 
   const canTakeTest = authData?.training_status === 'completed' || !authData?.training_required
 

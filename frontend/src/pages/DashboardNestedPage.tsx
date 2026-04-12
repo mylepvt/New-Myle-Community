@@ -34,6 +34,7 @@ import { WalletRechargeAdminPage } from '@/pages/WalletRechargeAdminPage'
 import { NoticeBoardPage } from '@/pages/NoticeBoardPage'
 import { TeamReportsPage } from '@/pages/TeamReportsPage'
 import { DailyReportFormPage } from '@/pages/DailyReportFormPage'
+import AnalyticsPage from '@/pages/AnalyticsPage'
 import PipelinePage from '@/pages/PipelinePage'
 import SettingsPage from '@/pages/SettingsPage'
 

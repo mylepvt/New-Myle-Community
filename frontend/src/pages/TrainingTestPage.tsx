@@ -2,9 +2,20 @@ import { useState } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
+import { Label } from '@/components/ui/label'
 import { CheckCircle, XCircle, Clock, Award } from 'lucide-react'
 import { useTrainingTestQuestionsQuery, useSubmitTrainingTestMutation } from '@/hooks/use-training-query'
 import { useAuthMeQuery } from '@/hooks/use-auth-me-query'
+
+type TestResult = {
+  passed: boolean
+  score: number
+  total_questions: number
+  percent: number
+  pass_mark_percent: number
+}
 
 export default function TrainingTestPage() {
   const { data: questions, isLoading: questionsLoading } = useTrainingTestQuestionsQuery()
@@ -12,7 +23,7 @@ export default function TrainingTestPage() {
   const submitMutation = useSubmitTrainingTestMutation()
   const [answers, setAnswers] = useState<Record<string, string>>({})
   const [showResults, setShowResults] = useState(false)
-  const [results, setResults] = useState<unknown>(null)
+  const [results, setResults] = useState<TestResult | null>(null)
 
   const canTakeTest = authData?.training_status === 'completed' || !authData?.training_required
 
