@@ -19,6 +19,7 @@ from app.db.session import engine
 from app.middleware.access_log import AccessLogMiddleware
 from app.middleware.auth_rate_limit import AuthRateLimitMiddleware
 from app.middleware.request_id import RequestIdMiddleware
+from app.middleware.security_headers import SecurityHeadersMiddleware
 
 
 @asynccontextmanager
@@ -34,6 +35,7 @@ register_exception_handlers(app)
 app.add_middleware(AccessLogMiddleware)
 app.add_middleware(AuthRateLimitMiddleware)
 app.add_middleware(RequestIdMiddleware)
+app.add_middleware(SecurityHeadersMiddleware)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.cors_origin_list,

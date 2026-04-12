@@ -9,3 +9,9 @@ __pycache__/
 
 # Local Claude / IDE agent tooling (not app source)
 .claude/
+
+# Secrets / session exports (never commit)
+cookies.txt
+**/cookies.txt
+*.cookies
+backend/.env

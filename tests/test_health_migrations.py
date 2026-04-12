@@ -15,3 +15,11 @@ def test_health_migrations_shape() -> None:
     assert isinstance(body["alembic_heads"], list)
     assert "current_revision" in body
     assert "at_head" in body
+
+
+def test_security_headers_on_public_health() -> None:
+    res = client.get("/health")
+    assert res.status_code == 200
+    assert res.headers.get("X-Content-Type-Options") == "nosniff"
+    assert res.headers.get("X-Frame-Options") == "SAMEORIGIN"
+    assert res.headers.get("Referrer-Policy") == "strict-origin-when-cross-origin"
